@@ -64,6 +64,10 @@ export default {
           view: 'TestOrgTeam'
         },
         {
+          title: 'Supprimer une team d\'une organisation',
+          view: 'TestOrgDelete'
+        },
+        {
           title: 'Récupérer une organisation',
           view: 'TestOrgId'
         },

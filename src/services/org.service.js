@@ -31,16 +31,14 @@ const addTeamToOrg = async (orgSecret, teamId) => {
   };
     
 
-const removeTeamFromOrg = async (orgId, teamId, secret) => {
-  try {
-    const response = await axiosService.patch(`/orgs/removeteam?org-secret=${secret}`, { idTeam: teamId });
-    console.log("Équipe supprimée de l'organisation avec succès :", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Erreur lors de la suppression de l'équipe de l'organisation :", error.message);
-    throw error;
-  }
-};
+  const removeTeamFromOrg = async (orgSecret, teamId) => {
+      const response = await axiosService.patch(
+        `/orgs/removeteam?org-secret=${orgSecret}`, 
+        { idTeam: teamId }
+      );
+      return response;
+  };
+  
 
 const getOrgById = async (orgId, secret) => {
   try {

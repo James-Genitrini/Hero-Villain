@@ -22,28 +22,32 @@ const createTeam = async (data) => {
     }
 };
 
-const addHeroesToTeam = async (data) => {
+const addHeroesToTeam = async ({ idHeroes, idTeam }) => {
     try {
-        const response = await axiosService.patch('/teams/addheroes', data);
-        console.log("Héros ajoutés avec succès !");
-        return response;
+      const response = await axiosService.patch('/teams/addheroes', {
+        idHeroes,
+        idTeam,
+      });
+      return response;
     } catch (error) {
-        console.error("Erreur lors de l'ajout des héros à l'équipe :", error.message);
-        throw error;
+      console.error("Erreur lors de l'ajout des héros à l'équipe :", error.message);
+      throw error;
     }
-};
-
-const removeHeroesFromTeam = async (data) => {
+  };
+  
+  const removeHeroesFromTeam = async ({ idHeroes, idTeam }) => {
     try {
-        const response = await axiosService.patch('/teams/removeheroes', data);
-        console.log("Héros supprimés avec succès !");
-        return response;
+      const response = await axiosService.patch('/teams/removeheroes', {
+        idHeroes,
+        idTeam,
+      });
+      return response;
     } catch (error) {
-        console.error("Erreur lors de la suppression des héros de l'équipe :", error.message);
-        throw error;
+      console.error("Erreur lors de la suppression des héros de l'équipe :", error.message);
+      throw error;
     }
-};
-
+  };
+  
 export default {
     getTeams,
     createTeam,

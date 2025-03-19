@@ -3,18 +3,19 @@
     <v-row justify="center">
       <v-col cols="12" md="6">
         <v-card class="pa-4">
-          <v-card-title>Gestion des Équipes</v-card-title>
+          <v-card-title>Gestion des Héros dans l'Équipe</v-card-title>
 
-          <v-form @submit.prevent="createTeam">
+          <v-form @submit.prevent="addHeroes">
             <v-text-field
               v-model="teamId"
-              label="ID de l'équipe"
+              label="ID de l'Équipe"
               required
               outlined
             ></v-text-field>
+
             <v-text-field
               v-model="heroIds"
-              label="IDs des héros"
+              label="IDs des Héros (séparés par des virgules)"
               required
               outlined
             ></v-text-field>
@@ -24,8 +25,30 @@
               color="blue darken-2"
               class="white--text"
               :loading="loading"
+              :disabled="loading"
             >
               Ajouter Héros à l'Équipe
+            </v-btn>
+          </v-form>
+
+          <v-divider></v-divider>
+
+          <v-form @submit.prevent="removeHeroes">
+            <v-text-field
+              v-model="heroIdsToRemove"
+              label="IDs des Héros à Supprimer (séparés par des virgules)"
+              required
+              outlined
+            ></v-text-field>
+
+            <v-btn
+              type="submit"
+              color="red darken-2"
+              class="white--text"
+              :loading="loading"
+              :disabled="loading"
+            >
+              Supprimer Héros de l'Équipe
             </v-btn>
           </v-form>
 
@@ -42,6 +65,10 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
+
+          <v-alert v-if="error" type="error" class="mt-3" dense>
+            {{ error }}
+          </v-alert>
         </v-card>
       </v-col>
     </v-row>
@@ -56,37 +83,61 @@ export default {
     return {
       teamId: "",
       heroIds: "",
+      heroIdsToRemove: "",
       teams: [],
-      loading: false
+      loading: false,
+      error: null,
     };
   },
   methods: {
-    async createTeam() {
+    async addHeroes() {
       this.loading = true;
+      this.error = null;
       const heroIdsArray = this.heroIds.split(",").map(id => id.trim());
       try {
-        await TeamService.addHeroesToTeam({ idHeroes: heroIdsArray, idTeam: this.teamId });
-        this.teamId = "";
-        this.heroIds = "";
-        this.fetchTeams();
+        await TeamService.addHeroesToTeam({
+          idHeroes: heroIdsArray,
+          idTeam: this.teamId,
+        });
+        this.heroIds = ""; 
+        this.fetchTeams(); 
       } catch (error) {
-        console.error("Erreur lors de l'ajout des héros à l'équipe :", error);
+        this.error = "Erreur lors de l'ajout des héros à l'équipe : " + error.message;
       } finally {
         this.loading = false;
       }
     },
+
+    async removeHeroes() {
+      this.loading = true;
+      this.error = null;
+      const heroIdsArray = this.heroIdsToRemove.split(",").map(id => id.trim());
+      try {
+        await TeamService.removeHeroesFromTeam({
+          idHeroes: heroIdsArray,
+          idTeam: this.teamId,
+        });
+        this.heroIdsToRemove = ""; 
+        this.fetchTeams(); 
+      } catch (error) {
+        this.error = "Erreur lors de la suppression des héros de l'équipe : " + error.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async fetchTeams() {
       try {
-        const response = await TeamService.getTeams();
+        const response = await TeamService.getTeams(); 
         this.teams = response.data;
       } catch (error) {
-        console.error("Erreur lors de la récupération des équipes :", error);
+        this.error = "Erreur lors de la récupération des équipes : " + error.message;
       }
-    }
+    },
   },
   mounted() {
-    this.fetchTeams();
-  }
+    this.fetchTeams(); 
+  },
 };
 </script>
 

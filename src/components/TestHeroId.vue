@@ -1,68 +1,53 @@
 <template>
-  <v-container class="test-hero-aliases">
+  <v-container class="hero-management">
     <v-row justify="center">
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="6">
         <v-card class="pa-4">
-          <v-card-title>Test - Liste des Héros</v-card-title>
+          <v-card-title>Récupérer un Héros par ID</v-card-title>
 
-          <v-form @submit.prevent="fetchHeroAliases">
+          <v-form @submit.prevent="getHeroById">
             <v-text-field
-              v-model="form.id"
-              label="ID Héros"
+              v-model="heroId"
+              label="ID du Héros"
               required
               outlined
-              dense
             ></v-text-field>
 
             <v-text-field
-              v-model="form.secret"
-              label="Secret organisation"
+              v-model="orgSecret"
+              label="Phrase Secrète de l'Organisation"
+              type="password"
               required
               outlined
-              dense
             ></v-text-field>
 
             <v-btn
+              type="submit"
               color="blue darken-2"
               class="white--text"
-              @click="fetchHeroAliases"
               :loading="loading"
               :disabled="loading"
             >
-              {{ loading ? "Chargement..." : "Récupérer le Héros" }}
+              Récupérer le Héros
             </v-btn>
-
-            <v-alert
-              v-if="error"
-              type="error"
-              class="mt-4"
-            >
-              ❌ Une erreur est survenue : {{ error }}
-            </v-alert>
-
-            <v-data-table
-              v-if="heroData"
-              :headers="headers"
-              :items="[heroData]"
-              item-key="_id"
-              class="elevation-1 mt-4"
-            >
-              <template v-slot:[`item._id`]="{ item }">
-                <td>{{ item._id }}</td>
-              </template>
-              <template v-slot:[`item.publicName`]="{ item }">
-                <td>{{ item.publicName }}</td>
-              </template>
-            </v-data-table>
-
-            <v-alert
-              v-if="!heroData && !loading && !error"
-              type="info"
-              class="mt-4"
-            >
-              Pas encore de données... Clique sur le bouton pour commencer !
-            </v-alert>
           </v-form>
+
+          <v-alert v-if="error" type="error" class="mt-3" dense>
+            {{ error }}
+          </v-alert>
+
+          <v-alert v-if="hero && !error" type="success" class="mt-3" dense>
+            <div><strong>Nom Public:</strong> {{ hero.publicName }}</div>
+            <div><strong>Nom Réel:</strong> {{ hero.realName }}</div>
+            <div><strong>Pouvoirs:</strong></div>
+            <v-list dense>
+              <v-list-item v-for="(power, index) in hero.powers" :key="index">
+                <v-list-item-content>
+                  <v-list-item-title>{{ power.name }} (Type: {{ power.type }}, Niveau: {{ power.level }})</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-alert>
         </v-card>
       </v-col>
     </v-row>
@@ -73,55 +58,50 @@
 import heroService from "@/services/hero.service";
 
 export default {
-  name: "TestHeroAliases",
   data() {
     return {
-      form: {
-        id: "",
-        secret: "",
-      },
-      heroData: null, 
-      loading: false, 
-      error: null, 
-      headers: [
-        { text: 'ID', value: '_id' },
-        { text: 'Nom Public', value: 'publicName' },
-      ],
+      heroId: "",
+      orgSecret: "",
+      hero: null,
+      loading: false,
+      error: null
     };
   },
   methods: {
-    async fetchHeroAliases() {
+    async getHeroById() {
       this.loading = true;
       this.error = null;
-      this.heroData = null;
+      this.hero = null;
 
       try {
-        if (!this.form.id || !this.form.secret) {
-          this.error = "L'ID et le Secret sont requis.";
-          return;
-        }
-        const response = await heroService.getHeroById(this.form.id, this.form.secret);
-        this.heroData = response.data;
+        const response = await heroService.getHeroById(this.heroId, this.orgSecret);
+        this.hero = response;
       } catch (err) {
-        this.error = err.message;
+        this.error = "Erreur lors de la récupération du héros : " + err.message;
       } finally {
         this.loading = false;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
-.test-hero-aliases {
+.hero-management {
   font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 20px;
 }
 
-.v-alert {
-  margin-top: 16px;
+.v-btn {
+  margin-top: 10px;
 }
 
-.v-data-table {
-  margin-top: 24px;
+.v-divider {
+  margin: 20px 0;
+}
+
+.v-list-item-title {
+  font-weight: bold;
 }
 </style>

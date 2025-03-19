@@ -28,6 +28,7 @@ import TestOrg from './components/TestOrg.vue';
 import TestOrgId from './components/TestOrgId.vue';
 import TestOrgCreate from './components/TestOrgCreate.vue'
 import TestOrgTeam from './components/TestOrgTeam.vue'
+import TestOrgDelete from './components/TestOrgDelete.vue'
 
 Vue.use(VueRouter);
 
@@ -43,6 +44,7 @@ const routes = [
   { path: './orgs/:id', component: TestOrgId, name: 'TestOrgId'},
   { path: './orgs/create ', component: TestOrgCreate, name: 'TestOrgCreate'},
   { path: './orgs/addteam ', component: TestOrgTeam, name: 'TestOrgTeam'},
+  { path: './orgs/removeteam ', component: TestOrgDelete, name: 'TestOrgDelete'},
 ];
 
 const router = new VueRouter({

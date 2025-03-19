@@ -1,22 +1,22 @@
 <template>
     <v-container class="text-center">
-      <h1 class="mb-4">Créer une Nouvelle Organisation</h1>
+      <h1 class="mb-4">Supprimer une Équipe d'une Organisation</h1>
   
-      <v-form @submit.prevent="createOrg" v-model="valid" ref="form">
+      <v-form @submit.prevent="removeTeamFromOrg" v-model="valid" ref="form">
         <v-text-field
-          v-model="orgName"
-          label="Nom de l'Organisation"
+          v-model="orgSecret"
+          label="Phrase Secrète de l'Organisation"
           required
           outlined
+          type="password"
           :rules="[rules.required]"
         ></v-text-field>
   
         <v-text-field
-          v-model="orgSecret"
-          label="Phrase Secrète"
+          v-model="teamId"
+          label="ID de l'Équipe à Supprimer"
           required
           outlined
-          type="password"
           :rules="[rules.required]"
         ></v-text-field>
   
@@ -28,7 +28,7 @@
           :disabled="loading || !valid"
           :loading="loading"
         >
-          Créer l'Organisation
+          Supprimer l'Équipe
         </v-btn>
       </v-form>
   
@@ -43,14 +43,13 @@
   </template>
   
   <script>
-  import orgService from "@/services/org.service";
+  import orgService from "@/services/org.service"; 
   
   export default {
-    name: "CreateOrg",
     data() {
       return {
-        orgName: "",
         orgSecret: "",
+        teamId: "",
         loading: false,
         error: null,
         successMessage: null,
@@ -61,32 +60,23 @@
       };
     },
     methods: {
-        async createOrg() {
-            this.loading = true;
-            this.error = null;
-            this.successMessage = null;
-
-            try {
-            const response = await orgService.createOrg({
-                name: this.orgName,
-                secret: this.orgSecret
-            });
-
-            if (response && response._id) {
-                this.successMessage = "Organisation créée avec succès!";
-            } else {
-                this.successMessage = "Organisation créée, mais aucune donnée retournée.";
-            }
-            this.orgName = "";
-            this.orgSecret = "";
-            } catch (err) {
-                this.error = err.message;
-            } finally {
-                this.loading = false;
-            }
+      async removeTeamFromOrg() {
+        this.loading = true;
+        this.error = null;
+        this.successMessage = null;
+  
+        try {
+          await orgService.removeTeamFromOrg(this.orgSecret, this.teamId);
+          this.successMessage = `L'équipe a été supprimée de l'organisation avec succès.`;
+          this.orgSecret = ""; 
+          this.teamId = "";
+        } catch (err) {
+          this.error = err.message || "Une erreur est survenue.";
+        } finally {
+          this.loading = false;
         }
+      }
     }
-
   };
   </script>
   
