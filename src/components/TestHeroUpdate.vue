@@ -8,8 +8,7 @@
             v-model="form._id" 
             label="ID du Héros" 
             required 
-            outlined 
-            readonly
+            outlined
           ></v-text-field>
   
           <v-text-field 
@@ -95,7 +94,7 @@
     data() {
       return {
         form: {
-          _id: "",  
+          _id: "", 
           publicName: "",
           realName: "",
           powers: [],
@@ -112,22 +111,15 @@
       removePower(index) {
         this.form.powers.splice(index, 1);
       },
-      async fetchHeroById() {
-        try {
-          const response = await heroService.getHeroById(this.$route.params.heroId, this.orgSecret);
-          this.form = response;
-        } catch (err) {
-          this.error = err.message;
-        }
-      },
       async updateHero() {
         this.loading = true;
         this.error = null;
         this.successMessage = null;
   
         try {
-          await heroService.updateHero(this.form);
+          await heroService.updateHero(this.form); 
           this.successMessage = "Héros mis à jour avec succès !";
+          this.form = { _id: "", publicName: "", realName: "", powers: [] }; 
         } catch (err) {
           this.error = err.message;
         } finally {
@@ -135,9 +127,6 @@
         }
       },
     },
-    mounted() {
-      this.fetchHeroById();
-    }
   };
   </script>
   
