@@ -54,17 +54,19 @@
 
           <v-divider></v-divider>
 
-          <v-list v-if="teams.length" dense>
-            <v-list-item-group>
-              <v-list-item v-for="team in teams" :key="team._id">
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ team.name }} (ID: {{ team._id }})
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
+          <v-card v-if="updatedTeam" class="mt-4">
+            <v-card-title>Équipe mise à jour</v-card-title>
+            <v-card-text>
+              <p><strong>Nom:</strong> {{ updatedTeam.name }}</p>
+              <p><strong>Membres:</strong></p>
+              <ul>
+                <li v-for="hero in updatedTeam.members" :key="hero._id">
+                  ID: {{ hero }}
+                </li>
+              </ul>
+            </v-card-text>
+          </v-card>
+
 
           <v-alert v-if="error" type="error" class="mt-3" dense>
             {{ error }}
@@ -95,12 +97,13 @@ export default {
       this.error = null;
       const heroIdsArray = this.heroIds.split(",").map(id => id.trim());
       try {
-        await TeamService.addHeroesToTeam({
+        const response = await TeamService.addHeroesToTeam({
           idHeroes: heroIdsArray,
           idTeam: this.teamId,
         });
         this.heroIds = ""; 
-        this.fetchTeams(); 
+        this.updatedTeam = response.data; 
+
       } catch (error) {
         this.error = "Erreur lors de l'ajout des héros à l'équipe : " + error.message;
       } finally {
@@ -113,32 +116,19 @@ export default {
       this.error = null;
       const heroIdsArray = this.heroIdsToRemove.split(",").map(id => id.trim());
       try {
-        await TeamService.removeHeroesFromTeam({
+        const response = await TeamService.removeHeroesFromTeam({
           idHeroes: heroIdsArray,
           idTeam: this.teamId,
         });
-        this.heroIdsToRemove = ""; 
-        this.fetchTeams(); 
+        this.updatedTeam = response.data; 
       } catch (error) {
         this.error = "Erreur lors de la suppression des héros de l'équipe : " + error.message;
       } finally {
         this.loading = false;
       }
-    },
-
-    async fetchTeams() {
-      try {
-        const response = await TeamService.getTeams(); 
-        this.teams = response.data;
-      } catch (error) {
-        this.error = "Erreur lors de la récupération des équipes : " + error.message;
-      }
-    },
-  },
-  mounted() {
-    this.fetchTeams(); 
-  },
-};
+    }
+  }
+}
 </script>
 
 <style scoped>
