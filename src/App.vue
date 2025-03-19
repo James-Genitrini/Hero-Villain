@@ -23,6 +23,7 @@ import TestHeroId from './components/TestHeroId.vue';
 import TestTeam from './components/TestTeam.vue';
 import TestTeamCreate from './components/TestTeamCreate.vue';
 import TestTeamManagement from './components/TestTeamManagement.vue';
+import TestHeroUpdate from './components/TestHeroUpdate.vue'
 
 Vue.use(VueRouter);
 
@@ -32,7 +33,8 @@ const routes = [
   { path: '/heroes/:id', component: TestHeroId, name: 'TestHeroId' },
   { path: '/teams', component: TestTeam, name: 'TestTeam' },
   { path: '/teams/create', component: TestTeamCreate, name: 'TestTeamCreate' },
-  { path: '/teams/manage', component: TestTeamManagement, name: 'TestTeamManagement' }
+  { path: '/teams/manage', component: TestTeamManagement, name: 'TestTeamManagement' },
+  { path: './heroes/update', component: TestHeroUpdate, name: 'TestHeroUpdate'}
 ];
 
 const router = new VueRouter({

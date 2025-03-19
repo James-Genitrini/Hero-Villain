@@ -1,9 +1,7 @@
 <template>
   <v-navigation-drawer app clipped v-model="drawer" :mini-variant="miniVariant">
     <v-list dense>
-      <!-- Utilisation de v-list-item-group avec vue-router -->
       <v-list-item-group v-for="(item, index) in menuItems" :key="index" :value="currentView">
-        <!-- Lien pour chaque item -->
         <v-list-item :class="{ active: $route.name === item.view }" :to="{ name: item.view }">
           <v-list-item-content>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -36,6 +34,10 @@ export default {
         {
           title: 'Récupérer un Héros',
           view: 'TestHeroId'
+        },
+        {
+          title: 'Modifier un Héros',
+          view:  'TestHeroUpdate'
         },
         {
           title: 'Équipes',
