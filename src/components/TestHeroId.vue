@@ -37,11 +37,12 @@
           </v-alert>
 
           <v-alert v-if="hero && !error" type="success" class="mt-3" dense>
-            <div><strong>Nom Public:</strong> {{ hero.publicName }}</div>
-            <div><strong>Nom Réel:</strong> {{ hero.realName }}</div>
+            <!-- {{ hero }} -->
+            <div><strong>Nom Public:</strong> {{ hero.data[0].publicName }}</div>
+            <div><strong>Nom Réel:</strong> {{ hero.data[0].realName }}</div>
             <div><strong>Pouvoirs:</strong></div>
             <v-list dense>
-              <v-list-item v-for="(power, index) in hero.powers" :key="index">
+              <v-list-item v-for="(power, index) in hero.data[0]?.powers" :key="index">
                 <v-list-item-content>
                   <v-list-item-title>{{ power.name }} (Type: {{ power.type }}, Niveau: {{ power.level }})</v-list-item-title>
                 </v-list-item-content>

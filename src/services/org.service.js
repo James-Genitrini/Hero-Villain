@@ -40,16 +40,16 @@ const addTeamToOrg = async (orgSecret, teamId) => {
   };
   
 
-const getOrgById = async (orgId, secret) => {
-  try {
-    const response = await axiosService.get(`/orgs/getbyid/${orgId}?org-secret=${secret}`);
-    console.log("Organisation récupérée avec succès :", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des détails de l'organisation :", error.message);
-    throw error;
-  }
-};
+  const getOrgById = async (orgId, secret) => {
+    try {
+      const response = await axiosService.get(`/orgs/getbyid/${orgId}?org-secret=${secret}`);
+      // console.log("Organisation récupérée :", response.data);
+      return response.data[0]; 
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  };
+  
 
 export default {
   getAllOrgs,
