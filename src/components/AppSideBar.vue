@@ -55,6 +55,18 @@ export default {
           title: 'Organisations',
           view: 'TestOrg'
         },
+        {
+          title: 'Créer une organisation',
+          view: 'TestOrgCreate'
+        },
+        {
+          title: 'Ajouter une team à une organisation',
+          view: 'TestOrgTeam'
+        },
+        {
+          title: 'Récupérer une organisation',
+          view: 'TestOrgId'
+        },
       ]
     };
   }

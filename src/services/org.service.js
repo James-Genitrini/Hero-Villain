@@ -11,9 +11,9 @@ const getAllOrgs = async () => {
   }
 };
 
-const createOrg = async (name, secret) => {
+const createOrg = async (data) => {
   try {
-    const response = await axiosService.post('/orgs/create', { name, secret });
+    const response = await axiosService.post('orgs/create', data);
     console.log("Organisation créée avec succès :", response.data);
     return response.data;
   } catch (error) {
@@ -22,16 +22,14 @@ const createOrg = async (name, secret) => {
   }
 };
 
-const addTeamToOrg = async (orgId, teamId, secret) => {
-  try {
-    const response = await axiosService.patch(`/orgs/addteam?org-secret=${secret}`, { idTeam: teamId });
-    console.log("Équipe ajoutée avec succès à l'organisation :", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Erreur lors de l'ajout de l'équipe à l'organisation :", error.message);
-    throw error;
-  }
-};
+const addTeamToOrg = async (orgSecret, teamId) => {
+      const response = await axiosService.patch(
+        `/orgs/addteam?org-secret=${orgSecret}`, 
+        { idTeam: teamId }
+      );
+      return response; 
+  };
+    
 
 const removeTeamFromOrg = async (orgId, teamId, secret) => {
   try {

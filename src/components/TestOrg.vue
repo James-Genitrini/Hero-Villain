@@ -17,17 +17,20 @@
         Une erreur est survenue : {{ error }}
       </v-alert>
   
-      <v-data-table
-        v-if="orgs.length"
-        :headers="headers"
-        :items="orgs"
-        class="mt-4"
-        dense
-      >
-        <template v-slot:item="{ item }">
-          <v-chip>{{ item.name }}</v-chip>
-        </template>
-      </v-data-table>
+      <v-table v-if="orgs.length" class="mt-4">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="org in orgs" :key="org._id">
+            <td>{{ org._id }}</td>
+            <td>{{ org.name }}</td>
+          </tr>
+        </tbody>
+      </v-table>
   
       <v-alert v-if="!orgs.length && !loading && !error" type="info" class="mt-3" dense>
         Pas encore de données... Clique sur le bouton pour commencer !
@@ -45,10 +48,6 @@
         orgs: [],
         loading: false,
         error: null,
-        headers: [
-          { text: "ID", value: "_id" },
-          { text: "Nom", value: "name" }
-        ]
       };
     },
     methods: {
@@ -73,6 +72,19 @@
   .v-container {
     max-width: 800px;
     margin: auto;
+  }
+  
+  v-table {
+    width: 100%;
+  }
+  
+  thead {
+    background-color: #f5f5f5;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
   }
   </style>
   
