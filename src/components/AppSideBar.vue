@@ -50,7 +50,11 @@ export default {
         {
           title: 'Gérer les équipes',
           view: 'TestTeamManagement'
-        }
+        },
+        {
+          title: 'Organisations',
+          view: 'TestOrg'
+        },
       ]
     };
   }

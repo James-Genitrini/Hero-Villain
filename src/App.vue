@@ -23,7 +23,9 @@ import TestHeroId from './components/TestHeroId.vue';
 import TestTeam from './components/TestTeam.vue';
 import TestTeamCreate from './components/TestTeamCreate.vue';
 import TestTeamManagement from './components/TestTeamManagement.vue';
-import TestHeroUpdate from './components/TestHeroUpdate.vue'
+import TestHeroUpdate from './components/TestHeroUpdate.vue';
+import TestOrg from './components/TestOrg.vue';
+
 
 Vue.use(VueRouter);
 
@@ -34,7 +36,8 @@ const routes = [
   { path: '/teams', component: TestTeam, name: 'TestTeam' },
   { path: '/teams/create', component: TestTeamCreate, name: 'TestTeamCreate' },
   { path: '/teams/manage', component: TestTeamManagement, name: 'TestTeamManagement' },
-  { path: './heroes/update', component: TestHeroUpdate, name: 'TestHeroUpdate'}
+  { path: './heroes/update', component: TestHeroUpdate, name: 'TestHeroUpdate'},
+  { path: './orgs', component: TestOrg, name: 'TestOrg'},
 ];
 
 const router = new VueRouter({
