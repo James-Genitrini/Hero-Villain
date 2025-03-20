@@ -36,7 +36,6 @@
             {{ error }}
           </v-alert>
 
-          <!-- Affichage des données récupérées depuis Vuex -->
           <v-alert v-if="selectedHero && !error" type="success" class="mt-3" dense>
             <div><strong>Nom Public:</strong> {{ selectedHero.publicName }}</div>
             <div><strong>Nom Réel:</strong> {{ selectedHero.realName }}</div>
@@ -61,14 +60,22 @@ import { mapActions, mapState } from "vuex";
 export default {
   data() {
     return {
-      heroId: "",
-      orgSecret: "",
+      heroId: "", 
+      orgSecret: "", 
       loading: false,
       error: null,
     };
   },
   computed: {
-    ...mapState(["selectedHero"]) // Récupération du héros stocké dans Vuex
+    ...mapState(["selectedHero", "organizationPassword"]),
+  },
+  created() {
+    if (this.selectedHero) {
+      this.heroId = this.selectedHero._id || "";
+    }
+    if (this.organizationPassword) {
+      this.orgSecret = this.organizationPassword;
+    }
   },
   methods: {
     ...mapActions(["fetchHeroById"]), 

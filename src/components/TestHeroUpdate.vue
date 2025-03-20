@@ -112,6 +112,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import heroService from "@/services/hero.service";
 
 export default {
@@ -131,7 +132,23 @@ export default {
       updatedHero: null,  
     };
   },
+  computed: {
+    ...mapState(["selectedHero", "organizationPassword"]), 
+  },
+  watch: {
+    selectedHero(newHero) {
+      if (newHero) {
+        this.form._id = newHero._id || ""; 
+        this.form.publicName = newHero.publicName || "";
+        this.form.realName = newHero.realName || "";
+        this.form.powers = newHero.powers || [];
+        this.form.orgSecret = this.organizationPassword || ""; 
+      }
+    }
+  },
   methods: {
+    ...mapActions(["fetchHeroById"]), 
+
     addPower() {
       this.form.powers.push({ name: "", type: null, level: null });
     },

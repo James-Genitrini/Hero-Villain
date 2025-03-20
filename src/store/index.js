@@ -83,13 +83,11 @@ export default new Vuex.Store({
     updateOrganization({ commit }, org) {
       commit('updateOrganization', org);
     },
-    setOrganizationSecret({ commit }, secret) {
-      commit("setOrganizationSecret", secret);
-    },
     async fetchHeroById({ commit }, { heroId, orgSecret }) {
       try {
         const response = await heroService.getHeroById(heroId, orgSecret);
-        commit("setSelectedHero", response.data[0]); 
+        commit("setSelectedHero", response.data[0]);
+        commit("setOrganizationPassword", orgSecret);
         return response.data[0]; 
       } catch (err) {
         throw new Error("Erreur lors de la récupération du héros : " + err.message);
