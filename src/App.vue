@@ -1,9 +1,7 @@
 <template>
   <v-app>
-    <!-- Barre latérale -->
     <app-sidebar />
 
-    <!-- Contenu principal -->
     <v-main>
       <v-container class="bg-grey lighten-4">
         <router-view /> 

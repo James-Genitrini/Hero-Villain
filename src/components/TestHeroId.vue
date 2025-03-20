@@ -36,13 +36,12 @@
             {{ error }}
           </v-alert>
 
-          <v-alert v-if="hero && !error" type="success" class="mt-3" dense>
-            <!-- {{ hero }} -->
-            <div><strong>Nom Public:</strong> {{ hero.data[0].publicName }}</div>
-            <div><strong>Nom Réel:</strong> {{ hero.data[0].realName }}</div>
+          <v-alert v-if="selectedHero && !error" type="success" class="mt-3" dense>
+            <div><strong>Nom Public:</strong> {{ selectedHero.publicName }}</div>
+            <div><strong>Nom Réel:</strong> {{ selectedHero.realName }}</div>
             <div><strong>Pouvoirs:</strong></div>
             <v-list dense>
-              <v-list-item v-for="(power, index) in hero.data[0]?.powers" :key="index">
+              <v-list-item v-for="(power, index) in selectedHero.powers" :key="index">
                 <v-list-item-content>
                   <v-list-item-title>{{ power.name }} (Type: {{ power.type }}, Niveau: {{ power.level }})</v-list-item-title>
                 </v-list-item-content>
@@ -56,29 +55,31 @@
 </template>
 
 <script>
-import heroService from "@/services/hero.service";
+import { mapActions, mapState } from "vuex";
 
 export default {
   data() {
     return {
       heroId: "",
       orgSecret: "",
-      hero: null,
       loading: false,
-      error: null
+      error: null,
     };
   },
+  computed: {
+    ...mapState(["selectedHero"]) 
+  },
   methods: {
+    ...mapActions(["fetchHeroById"]), 
+
     async getHeroById() {
       this.loading = true;
       this.error = null;
-      this.hero = null;
 
       try {
-        const response = await heroService.getHeroById(this.heroId, this.orgSecret);
-        this.hero = response;
+        await this.fetchHeroById({ heroId: this.heroId, orgSecret: this.orgSecret });
       } catch (err) {
-        this.error = "Erreur lors de la récupération du héros : " + err.message;
+        this.error = err.message;
       } finally {
         this.loading = false;
       }

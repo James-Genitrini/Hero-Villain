@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import heroService from "@/services/hero.service"; // Assurez-vous que ce service est bien défini
 
 Vue.use(Vuex);
 
@@ -82,5 +83,15 @@ export default new Vuex.Store({
     updateOrganization({ commit }, org) {
       commit('updateOrganization', org);
     },
-  },
+
+    async fetchHeroById({ commit }, { heroId, orgSecret }) {
+      try {
+        const response = await heroService.getHeroById(heroId, orgSecret);
+        commit("setSelectedHero", response.data[0]); 
+        return response.data[0]; 
+      } catch (err) {
+        throw new Error("Erreur lors de la récupération du héros : " + err.message);
+      }
+    }
+  }
 });
