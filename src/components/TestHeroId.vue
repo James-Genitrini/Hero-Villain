@@ -14,7 +14,8 @@
             ></v-text-field>
 
             <v-text-field
-              v-model="orgSecret"
+              v-model="organizationSecret"
+              @input="updateOrganizationSecret"
               label="Phrase Secrète de l'Organisation"
               type="password"
               required
@@ -55,29 +56,33 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
   data() {
     return {
       heroId: "",
-      orgSecret: "",
       loading: false,
       error: null,
     };
   },
   computed: {
-    ...mapState(["selectedHero"]) 
+    ...mapState(["selectedHero", "organizationSecret"]),
   },
   methods: {
-    ...mapActions(["fetchHeroById"]), 
+    ...mapActions(["fetchHeroById"]),
+    ...mapMutations(["setOrganizationSecret"]),
+
+    updateOrganizationSecret(event) {
+      this.setOrganizationSecret(event); 
+    },
 
     async getHeroById() {
       this.loading = true;
       this.error = null;
 
       try {
-        await this.fetchHeroById({ heroId: this.heroId, orgSecret: this.orgSecret });
+        await this.fetchHeroById({ heroId: this.heroId });
       } catch (err) {
         this.error = err.message;
       } finally {

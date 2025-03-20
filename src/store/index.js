@@ -83,7 +83,9 @@ export default new Vuex.Store({
     updateOrganization({ commit }, org) {
       commit('updateOrganization', org);
     },
-
+    setOrganizationSecret({ commit }, secret) {
+      commit("setOrganizationSecret", secret);
+    },
     async fetchHeroById({ commit }, { heroId, orgSecret }) {
       try {
         const response = await heroService.getHeroById(heroId, orgSecret);
