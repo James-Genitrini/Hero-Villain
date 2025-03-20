@@ -14,8 +14,7 @@
             ></v-text-field>
 
             <v-text-field
-              v-model="organizationSecret"
-              @input="updateOrganizationSecret"
+              v-model="orgSecret"
               label="Phrase Secrète de l'Organisation"
               type="password"
               required
@@ -37,6 +36,7 @@
             {{ error }}
           </v-alert>
 
+          <!-- Affichage des données récupérées depuis Vuex -->
           <v-alert v-if="selectedHero && !error" type="success" class="mt-3" dense>
             <div><strong>Nom Public:</strong> {{ selectedHero.publicName }}</div>
             <div><strong>Nom Réel:</strong> {{ selectedHero.realName }}</div>
@@ -56,33 +56,29 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   data() {
     return {
       heroId: "",
+      orgSecret: "",
       loading: false,
       error: null,
     };
   },
   computed: {
-    ...mapState(["selectedHero", "organizationSecret"]),
+    ...mapState(["selectedHero"]) // Récupération du héros stocké dans Vuex
   },
   methods: {
-    ...mapActions(["fetchHeroById"]),
-    ...mapMutations(["setOrganizationSecret"]),
-
-    updateOrganizationSecret(event) {
-      this.setOrganizationSecret(event); 
-    },
+    ...mapActions(["fetchHeroById"]), 
 
     async getHeroById() {
       this.loading = true;
       this.error = null;
 
       try {
-        await this.fetchHeroById({ heroId: this.heroId });
+        await this.fetchHeroById({ heroId: this.heroId, orgSecret: this.orgSecret });
       } catch (err) {
         this.error = err.message;
       } finally {
