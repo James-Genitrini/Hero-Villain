@@ -54,19 +54,18 @@
 
           <v-divider></v-divider>
 
-          <v-card v-if="updatedTeam" class="mt-4">
+          <v-card v-if="selectedTeam" class="mt-4">
             <v-card-title>Équipe mise à jour</v-card-title>
             <v-card-text>
-              <p><strong>Nom:</strong> {{ updatedTeam.name }}</p>
+              <p><strong>Nom:</strong> {{ selectedTeam.name }}</p>
               <p><strong>Membres:</strong></p>
               <ul>
-                <li v-for="hero in updatedTeam.members" :key="hero._id">
+                <li v-for="hero in selectedTeam.members" :key="hero._id">
                   ID: {{ hero }}
                 </li>
               </ul>
             </v-card-text>
           </v-card>
-
 
           <v-alert v-if="error" type="error" class="mt-3" dense>
             {{ error }}
@@ -78,6 +77,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import TeamService from "@/services/team.service";
 
 export default {
@@ -86,26 +86,31 @@ export default {
       teamId: "",
       heroIds: "",
       heroIdsToRemove: "",
-      teams: [],
       loading: false,
       error: null,
     };
   },
+  computed: {
+    ...mapState(["selectedTeam"]), 
+  },
   methods: {
+    ...mapActions(["setSelectedTeam"]), 
+
     async addHeroes() {
       this.loading = true;
       this.error = null;
       const heroIdsArray = this.heroIds.split(",").map(id => id.trim());
+
       try {
         const response = await TeamService.addHeroesToTeam({
           idHeroes: heroIdsArray,
           idTeam: this.teamId,
         });
-        this.heroIds = ""; 
-        this.updatedTeam = response.data; 
 
+        this.setSelectedTeam(response.data); 
+        this.heroIds = "";
       } catch (error) {
-        this.error = "Erreur lors de l'ajout des héros à l'équipe : " + error.message;
+        this.error = "Erreur lors de l'ajout des héros : " + error.message;
       } finally {
         this.loading = false;
       }
@@ -115,20 +120,23 @@ export default {
       this.loading = true;
       this.error = null;
       const heroIdsArray = this.heroIdsToRemove.split(",").map(id => id.trim());
+
       try {
         const response = await TeamService.removeHeroesFromTeam({
           idHeroes: heroIdsArray,
           idTeam: this.teamId,
         });
-        this.updatedTeam = response.data; 
+
+        this.setSelectedTeam(response.data); 
+        this.heroIdsToRemove = "";
       } catch (error) {
-        this.error = "Erreur lors de la suppression des héros de l'équipe : " + error.message;
+        this.error = "Erreur lors de la suppression des héros : " + error.message;
       } finally {
         this.loading = false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

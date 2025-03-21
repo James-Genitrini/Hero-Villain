@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import orgService from "@/services/org.service";
 
 export default {
@@ -68,7 +69,12 @@ export default {
       error: null
     };
   },
+  computed: {
+    ...mapState(["selectedOrganization"]), 
+  },
   methods: {
+    ...mapActions(["setSelectedOrganization"]), 
+
     async fetchOrgById() {
       if (!this.orgId) {
         this.error = "L'ID de l'organisation est requis.";
@@ -82,6 +88,7 @@ export default {
       try {
         const orgData = await orgService.getOrgById(this.orgId, this.orgSecret);
         this.org = orgData;
+        this.setSelectedOrganization(orgData); 
       } catch (err) {
         this.error = err.message || "Erreur lors de la récupération des données.";
       } finally {

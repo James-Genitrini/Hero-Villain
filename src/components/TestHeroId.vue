@@ -66,7 +66,8 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
+import heroService from "@/services/hero.service";
 
 export default {
   data() {
@@ -78,27 +79,25 @@ export default {
     };
   },
   computed: {
-    ...mapState(["selectedHero", "organizationPassword"]),
+    ...mapState(["selectedHero"]),
   },
   created() {
     if (this.selectedHero) {
       this.heroId = this.selectedHero._id || "";
     }
-    if (this.organizationPassword) {
-      this.orgSecret = this.organizationPassword;
-    }
   },
   methods: {
-    ...mapActions(["fetchHeroById"]), 
+    ...mapMutations(["setSelectedHero"]), 
 
     async getHeroById() {
       this.loading = true;
       this.error = null;
 
       try {
-        await this.fetchHeroById({ heroId: this.heroId, orgSecret: this.orgSecret });
+        const response = await heroService.getHeroById(this.heroId, this.orgSecret);
+        this.setSelectedHero(response.data[0]); 
       } catch (err) {
-        this.error = err.message;
+        this.error = "Erreur lors de la récupération du héros : " + err.message;
       } finally {
         this.loading = false;
       }
