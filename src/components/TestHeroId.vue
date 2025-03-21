@@ -50,6 +50,17 @@
           </v-alert>
         </v-card>
       </v-col>
+
+      <v-col cols="12" md="6">
+        <v-card class="pa-4">
+          <v-card-title>État du Store (selectedHero)</v-card-title>
+          <v-divider></v-divider>
+          <pre v-if="selectedHero">{{ selectedHero }}</pre>
+          <v-alert v-else type="info" dense>
+            Aucun héros sélectionné pour le moment.
+          </v-alert>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -113,5 +124,12 @@ export default {
 
 .v-list-item-title {
   font-weight: bold;
+}
+
+pre {
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
 }
 </style>

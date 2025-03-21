@@ -108,6 +108,16 @@
         </v-list-item>
       </v-list>
     </v-card>
+
+    <!-- Affichage du selectedHero pour vérifier s'il est bien stocké dans le store -->
+    <v-card class="mt-5 pa-4">
+      <v-card-title>État du Store (selectedHero)</v-card-title>
+      <v-divider></v-divider>
+      <pre v-if="selectedHero">{{ selectedHero }}</pre>
+      <v-alert v-else type="info" dense>
+        Aucun héros sélectionné pour le moment.
+      </v-alert>
+    </v-card>
   </v-container>
 </template>
 
@@ -141,7 +151,7 @@ export default {
         this.form._id = newHero._id || ""; 
         this.form.publicName = newHero.publicName || "";
         this.form.realName = newHero.realName || "";
-        this.form.powers = newHero.powers || [];
+        this.form.powers = newHero.powers ? [...newHero.powers] : [];
         this.form.orgSecret = this.organizationPassword || ""; 
       }
     }
@@ -187,5 +197,12 @@ export default {
 .test-hero-update {
   max-width: 600px;
   margin: auto;
+}
+
+pre {
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
 }
 </style>
