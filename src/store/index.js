@@ -62,8 +62,16 @@ export default new Vuex.Store({
     setSelectedHero({ commit }, hero) {
       commit('setSelectedHero', hero);
     },
-    updateHero({ commit }, hero) {
-      commit('updateHero', hero);
+    async updateHero({ commit }, { heroData, orgSecret }) {
+      try {
+        const response = await heroService.updateHero(heroData, orgSecret);
+        
+        commit("setSelectedHero", response.data);
+        
+        return response.data; 
+      } catch (err) {
+        throw new Error("Erreur lors de la mise à jour du héros : " + err.message);
+      }
     },
     setTeams({ commit }, teams) {
       commit('setTeams', teams);
