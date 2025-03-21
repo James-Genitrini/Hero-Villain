@@ -145,15 +145,12 @@ export default {
   computed: {
     ...mapState(["selectedHero", "organizationPassword"]), 
   },
-  watch: {
-    selectedHero(newHero) {
-      if (newHero) {
-        this.form._id = newHero._id || ""; 
-        this.form.publicName = newHero.publicName || "";
-        this.form.realName = newHero.realName || "";
-        this.form.powers = newHero.powers ? [...newHero.powers] : [];
-        this.form.orgSecret = this.organizationPassword || ""; 
-      }
+  created() {
+    if (this.selectedHero) {
+      this.heroId = this.selectedHero._id || "";
+    }
+    if (this.organizationPassword) {
+      this.orgSecret = this.organizationPassword;
     }
   },
   methods: {

@@ -15,7 +15,8 @@ const createTeam = async (data) => {
     try {
         const response = await axiosService.post('/teams/create', data);
         console.log("Équipe créée avec succès !");
-        return response;
+        console.log(response)
+        return response.data;
     } catch (error) {
         console.error("Erreur lors de la création de l'équipe :", error.message);
         throw error;

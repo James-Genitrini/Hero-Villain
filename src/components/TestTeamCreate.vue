@@ -23,13 +23,42 @@
             </v-btn>
 
             <v-alert v-if="error" type="error" class="mt-4">
-              ❌ Une erreur est survenue : {{ error }}
+              Une erreur est survenue : {{ error }}
             </v-alert>
 
             <v-alert v-if="successMessage" type="success" class="mt-4">
-              ✅ {{ successMessage }}
+              {{ successMessage }}
             </v-alert>
           </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-divider class="my-5"></v-divider>
+
+    <v-row justify="center" v-if="selectedTeam">
+      <v-col cols="12" md="6">
+        <v-card class="pa-4">
+          <v-card-title>Équipe Stockée dans le Store</v-card-title>
+          <v-card-text>
+            <p><strong>Nom de l'Équipe :</strong> {{ selectedTeam.name }}</p>
+            <p><strong>ID :</strong> {{ selectedTeam._id }}</p>
+
+            <v-divider class="my-3"></v-divider>
+
+            <p><strong>Membres :</strong></p>
+            <v-list v-if="selectedTeam.members && selectedTeam.members.length">
+              <v-list-item v-for="(member, index) in selectedTeam.members" :key="index">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ member.name }} (ID: {{ member._id }})
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+
+            <p v-else>Aucun membre dans cette équipe.</p>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -37,6 +66,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import teamService from "@/services/team.service";
 
 export default {
@@ -44,14 +74,20 @@ export default {
   data() {
     return {
       form: {
-        name: ""
+        name: "",
+        members: [],
       },
       error: null,
       successMessage: null,
-      loading: false
+      loading: false,
     };
   },
+  computed: {
+    ...mapState(["selectedTeam"]), 
+  },
   methods: {
+    ...mapActions(["setSelectedTeam"]),
+
     async createTeam() {
       this.loading = true;
       this.error = null;
@@ -64,16 +100,21 @@ export default {
       }
 
       try {
-        await teamService.createTeam(this.form);
-        this.successMessage = "Équipe créée avec succès !";
+        const teamData = await teamService.createTeam(this.form);
+
+        this.setSelectedTeam(teamData);
+
+        this.successMessage = "Équipe créée avec succès et stockée dans Vuex !";
+        console.log(teamData)
         this.form.name = "";
+        this.form.members = [];
       } catch (err) {
         this.error = err.message;
       } finally {
         this.loading = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
