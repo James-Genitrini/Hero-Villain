@@ -4,30 +4,30 @@
       <v-card-title>Mise à jour d'un Héros</v-card-title>
 
       <v-form @submit.prevent="updateHero">
-        <v-text-field 
-          v-model="form._id" 
-          label="ID du Héros" 
-          required 
-          outlined
+        <v-text-field
+            v-model="form._id"
+            label="ID du Héros"
+            required
+            outlined
         ></v-text-field>
 
-        <v-text-field 
-          v-model="form.publicName" 
-          label="Nom Public" 
-          outlined
+        <v-text-field
+            v-model="form.publicName"
+            label="Nom Public"
+            outlined
         ></v-text-field>
 
-        <v-text-field 
-          v-model="form.realName" 
-          label="Nom Réel" 
-          outlined
+        <v-text-field
+            v-model="form.realName"
+            label="Nom Réel"
+            outlined
         ></v-text-field>
 
-        <v-text-field 
-          v-model="form.orgSecret" 
-          label="Clé Secrète de l'Organisation" 
-          required 
-          outlined
+        <v-text-field
+            v-model="form.orgSecret"
+            label="Clé Secrète de l'Organisation"
+            required
+            outlined
         ></v-text-field>
 
         <v-divider class="my-4"></v-divider>
@@ -40,28 +40,28 @@
           <v-card outlined class="pa-3">
             <v-card-title>Pouvoir {{ index + 1 }}</v-card-title>
 
-            <v-text-field 
-              v-model="power.name" 
-              label="Nom du Pouvoir" 
-              outlined
+            <v-text-field
+                v-model="power.name"
+                label="Nom du Pouvoir"
+                outlined
             ></v-text-field>
 
-            <v-text-field 
-              v-model.number="power.type" 
-              label="Type (1 à 7)" 
-              type="number" 
-              min="1" 
-              max="7" 
-              outlined
+            <v-text-field
+                v-model.number="power.type"
+                label="Type (1 à 7)"
+                type="number"
+                min="1"
+                max="7"
+                outlined
             ></v-text-field>
 
-            <v-text-field 
-              v-model.number="power.level" 
-              label="Niveau (0 à 100)" 
-              type="number" 
-              min="0" 
-              max="100" 
-              outlined
+            <v-text-field
+                v-model.number="power.level"
+                label="Niveau (0 à 100)"
+                type="number"
+                min="0"
+                max="100"
+                outlined
             ></v-text-field>
 
             <v-btn color="red" class="white--text mt-2" @click="removePower(index)">
@@ -130,31 +130,33 @@ export default {
   data() {
     return {
       form: {
-        _id: "", 
+        _id: "",
         publicName: "",
         realName: "",
         powers: [],
-        orgSecret: "", 
+        orgSecret: "",
       },
-      error: null,
       successMessage: null,
       loading: false,
-      updatedHero: null,  
+      updatedHero: null,
     };
   },
   computed: {
-    ...mapState(["selectedHero", "organizationPassword"]), 
+    ...mapState("heroes", ["selectedHero"]),
+    ...mapState("secretPhrase", ["organizationPassword"]),
+    ...mapState("errors", ["error"]),
   },
   created() {
     if (this.selectedHero) {
-      this.heroId = this.selectedHero._id || "";
+      this.form._id = this.selectedHero._id || "";
     }
     if (this.organizationPassword) {
-      this.orgSecret = this.organizationPassword;
+      this.form.orgSecret = this.organizationPassword;
     }
   },
   methods: {
-    ...mapActions(["fetchHeroById"]), 
+    ...mapActions("heroes", ["updateHero"]),
+    ...mapActions("errors", ["setError", "clearError"]),
 
     addPower() {
       this.form.powers.push({ name: "", type: null, level: null });
@@ -164,24 +166,24 @@ export default {
     },
     async updateHero() {
       this.loading = true;
-      this.error = null;
+      this.clearError();
       this.successMessage = null;
 
       try {
         const heroData = { ...this.form };
-        
+
         if (!heroData.publicName) delete heroData.publicName;
         if (!heroData.realName) delete heroData.realName;
         if (heroData.powers.length === 0) delete heroData.powers;
 
-        const response = await heroService.updateHero(this.form, this.form.orgSecret); 
+        const response = await heroService.updateHero(heroData, this.form.orgSecret);
         this.successMessage = "Héros mis à jour avec succès !";
 
         this.updatedHero = response.data;
 
-        this.form = { _id: "", publicName: "", realName: "", powers: [], orgSecret: "" }; 
+        this.form = { _id: "", publicName: "", realName: "", powers: [], orgSecret: "" };
       } catch (err) {
-        this.error = err.message;
+        this.setError(err.message);
       } finally {
         this.loading = false;
       }

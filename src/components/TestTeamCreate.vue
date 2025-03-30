@@ -7,17 +7,17 @@
 
           <v-form @submit.prevent="createTeam">
             <v-text-field
-              v-model="form.name"
-              label="Nom de l'équipe"
-              required
-              outlined
+                v-model="form.name"
+                label="Nom de l'équipe"
+                required
+                outlined
             ></v-text-field>
 
             <v-btn
-              type="submit"
-              color="blue darken-2"
-              class="white--text"
-              :loading="loading"
+                type="submit"
+                color="blue darken-2"
+                class="white--text"
+                :loading="loading"
             >
               Créer l'Équipe
             </v-btn>
@@ -77,24 +77,25 @@ export default {
         name: "",
         members: [],
       },
-      error: null,
       successMessage: null,
       loading: false,
     };
   },
   computed: {
-    ...mapState(["selectedTeam"]), 
+    ...mapState("general", ["selectedTeam"]),
+    ...mapState("errors", ["error"]),
   },
   methods: {
-    ...mapActions(["setSelectedTeam"]),
+    ...mapActions("general", ["setSelectedTeam"]),
+    ...mapActions("errors", ["setError", "clearError"]),
 
     async createTeam() {
       this.loading = true;
-      this.error = null;
+      this.clearError();
       this.successMessage = null;
 
       if (!this.form.name) {
-        this.error = "Le nom de l'équipe est requis.";
+        this.setError("Le nom de l'équipe est requis.");
         this.loading = false;
         return;
       }
@@ -105,11 +106,11 @@ export default {
         this.setSelectedTeam(teamData);
 
         this.successMessage = "Équipe créée avec succès et stockée dans Vuex !";
-        console.log(teamData)
+        console.log(teamData);
         this.form.name = "";
         this.form.members = [];
       } catch (err) {
-        this.error = err.message;
+        this.setError(err.message);
       } finally {
         this.loading = false;
       }

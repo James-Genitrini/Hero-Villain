@@ -7,26 +7,26 @@
 
           <v-form @submit.prevent="getHeroById">
             <v-text-field
-              v-model="heroId"
-              label="ID du Héros"
-              required
-              outlined
+                v-model="heroId"
+                label="ID du Héros"
+                required
+                outlined
             ></v-text-field>
 
             <v-text-field
-              v-model="orgSecret"
-              label="Phrase Secrète de l'Organisation"
-              type="password"
-              required
-              outlined
+                v-model="orgSecret"
+                label="Phrase Secrète de l'Organisation"
+                type="password"
+                required
+                outlined
             ></v-text-field>
 
             <v-btn
-              type="submit"
-              color="blue darken-2"
-              class="white--text"
-              :loading="loading"
-              :disabled="loading"
+                type="submit"
+                color="blue darken-2"
+                class="white--text"
+                :loading="loading"
+                :disabled="loading"
             >
               Récupérer le Héros
             </v-btn>
@@ -66,20 +66,20 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import heroService from "@/services/hero.service";
 
 export default {
   data() {
     return {
-      heroId: "", 
-      orgSecret: "", 
+      heroId: "",
+      orgSecret: "",
       loading: false,
-      error: null,
     };
   },
   computed: {
-    ...mapState(["selectedHero"]),
+    ...mapState("heroes", ["selectedHero"]),
+    ...mapState("errors", ["error"]),
   },
   created() {
     if (this.selectedHero) {
@@ -87,17 +87,18 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setSelectedHero"]), 
+    ...mapMutations("heroes", ["setSelectedHero"]),
+    ...mapActions("errors", ["setError", "clearError"]),
 
     async getHeroById() {
       this.loading = true;
-      this.error = null;
+      this.clearError();
 
       try {
         const response = await heroService.getHeroById(this.heroId, this.orgSecret);
-        this.setSelectedHero(response.data[0]); 
+        this.setSelectedHero(response.data[0]);
       } catch (err) {
-        this.error = "Erreur lors de la récupération du héros : " + err.message;
+        this.setError("Erreur lors de la récupération du héros : " + err.message);
       } finally {
         this.loading = false;
       }

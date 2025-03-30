@@ -4,24 +4,24 @@
 
     <v-form @submit.prevent="fetchOrgById">
       <v-text-field
-        v-model="orgId"
-        label="ID de l'Organisation"
-        required
+          v-model="orgId"
+          label="ID de l'Organisation"
+          required
       />
       <v-text-field
-        v-model="orgSecret"
-        label="Secret de l'organisation"
-        type="password"
-        required
-        outlined
+          v-model="orgSecret"
+          label="Secret de l'organisation"
+          type="password"
+          required
+          outlined
       />
-      <v-btn 
-        color="blue darken-2" 
-        class="white--text"
-        elevation="2"
-        :loading="loading"
-        :disabled="loading"
-        type="submit"
+      <v-btn
+          color="blue darken-2"
+          class="white--text"
+          elevation="2"
+          :loading="loading"
+          :disabled="loading"
+          type="submit"
       >
         Récupérer l'Organisation
       </v-btn>
@@ -66,31 +66,32 @@ export default {
       orgSecret: "",
       org: null,
       loading: false,
-      error: null
     };
   },
   computed: {
-    ...mapState(["selectedOrganization"]), 
+    ...mapState("general", ["selectedOrganization"]),
+    ...mapState("errors", ["error"]),
   },
   methods: {
-    ...mapActions(["setSelectedOrganization"]), 
+    ...mapActions("general", ["setSelectedOrganization"]),
+    ...mapActions("errors", ["setError", "clearError"]),
 
     async fetchOrgById() {
       if (!this.orgId) {
-        this.error = "L'ID de l'organisation est requis.";
+        this.setError("L'ID de l'organisation est requis.");
         return;
       }
 
       this.loading = true;
-      this.error = null;
+      this.clearError();
       this.org = null;
 
       try {
         const orgData = await orgService.getOrgById(this.orgId, this.orgSecret);
         this.org = orgData;
-        this.setSelectedOrganization(orgData); 
+        this.setSelectedOrganization(orgData);
       } catch (err) {
-        this.error = err.message || "Erreur lors de la récupération des données.";
+        this.setError(err.message || "Erreur lors de la récupération des données.");
       } finally {
         this.loading = false;
       }

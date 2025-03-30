@@ -7,25 +7,25 @@
 
           <v-form @submit.prevent="addHeroes">
             <v-text-field
-              v-model="teamId"
-              label="ID de l'Équipe"
-              required
-              outlined
+                v-model="teamId"
+                label="ID de l'Équipe"
+                required
+                outlined
             ></v-text-field>
 
             <v-text-field
-              v-model="heroIds"
-              label="IDs des Héros (séparés par des virgules)"
-              required
-              outlined
+                v-model="heroIds"
+                label="IDs des Héros (séparés par des virgules)"
+                required
+                outlined
             ></v-text-field>
 
             <v-btn
-              type="submit"
-              color="blue darken-2"
-              class="white--text"
-              :loading="loading"
-              :disabled="loading"
+                type="submit"
+                color="blue darken-2"
+                class="white--text"
+                :loading="loading"
+                :disabled="loading"
             >
               Ajouter Héros à l'Équipe
             </v-btn>
@@ -35,18 +35,18 @@
 
           <v-form @submit.prevent="removeHeroes">
             <v-text-field
-              v-model="heroIdsToRemove"
-              label="IDs des Héros à Supprimer (séparés par des virgules)"
-              required
-              outlined
+                v-model="heroIdsToRemove"
+                label="IDs des Héros à Supprimer (séparés par des virgules)"
+                required
+                outlined
             ></v-text-field>
 
             <v-btn
-              type="submit"
-              color="red darken-2"
-              class="white--text"
-              :loading="loading"
-              :disabled="loading"
+                type="submit"
+                color="red darken-2"
+                class="white--text"
+                :loading="loading"
+                :disabled="loading"
             >
               Supprimer Héros de l'Équipe
             </v-btn>
@@ -87,18 +87,19 @@ export default {
       heroIds: "",
       heroIdsToRemove: "",
       loading: false,
-      error: null,
     };
   },
   computed: {
-    ...mapState(["selectedTeam"]), 
+    ...mapState("general", ["selectedTeam"]),
+    ...mapState("errors", ["error"]),
   },
   methods: {
-    ...mapActions(["setSelectedTeam"]), 
+    ...mapActions("general", ["setSelectedTeam"]),
+    ...mapActions("errors", ["setError", "clearError"]),
 
     async addHeroes() {
       this.loading = true;
-      this.error = null;
+      this.clearError();
       const heroIdsArray = this.heroIds.split(",").map(id => id.trim());
 
       try {
@@ -107,10 +108,10 @@ export default {
           idTeam: this.teamId,
         });
 
-        this.setSelectedTeam(response.data); 
+        this.setSelectedTeam(response.data);
         this.heroIds = "";
       } catch (error) {
-        this.error = "Erreur lors de l'ajout des héros : " + error.message;
+        this.setError("Erreur lors de l'ajout des héros : " + error.message);
       } finally {
         this.loading = false;
       }
@@ -118,7 +119,7 @@ export default {
 
     async removeHeroes() {
       this.loading = true;
-      this.error = null;
+      this.clearError();
       const heroIdsArray = this.heroIdsToRemove.split(",").map(id => id.trim());
 
       try {
@@ -127,10 +128,10 @@ export default {
           idTeam: this.teamId,
         });
 
-        this.setSelectedTeam(response.data); 
+        this.setSelectedTeam(response.data);
         this.heroIdsToRemove = "";
       } catch (error) {
-        this.error = "Erreur lors de la suppression des héros : " + error.message;
+        this.setError("Erreur lors de la suppression des héros : " + error.message);
       } finally {
         this.loading = false;
       }

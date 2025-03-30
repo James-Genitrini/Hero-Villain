@@ -4,18 +4,18 @@
       <v-card-title>Création d'un Nouveau Héros</v-card-title>
 
       <v-form @submit.prevent="createHero">
-        <v-text-field 
-          v-model="form.publicName" 
-          label="Nom Public" 
-          required 
-          outlined
+        <v-text-field
+            v-model="form.publicName"
+            label="Nom Public"
+            required
+            outlined
         ></v-text-field>
 
-        <v-text-field 
-          v-model="form.realName" 
-          label="Nom Réel" 
-          required 
-          outlined
+        <v-text-field
+            v-model="form.realName"
+            label="Nom Réel"
+            required
+            outlined
         ></v-text-field>
 
         <v-divider class="my-4"></v-divider>
@@ -28,31 +28,31 @@
           <v-card outlined class="pa-3">
             <v-card-title>Pouvoir {{ index + 1 }}</v-card-title>
 
-            <v-text-field 
-              v-model="power.name" 
-              label="Nom du Pouvoir" 
-              required 
-              outlined
+            <v-text-field
+                v-model="power.name"
+                label="Nom du Pouvoir"
+                required
+                outlined
             ></v-text-field>
 
-            <v-text-field 
-              v-model.number="power.type" 
-              label="Type (1 à 7)" 
-              type="number" 
-              min="1" 
-              max="7" 
-              required 
-              outlined
+            <v-text-field
+                v-model.number="power.type"
+                label="Type (1 à 7)"
+                type="number"
+                min="1"
+                max="7"
+                required
+                outlined
             ></v-text-field>
 
-            <v-text-field 
-              v-model.number="power.level" 
-              label="Niveau (0 à 100)" 
-              type="number" 
-              min="0" 
-              max="100" 
-              required 
-              outlined
+            <v-text-field
+                v-model.number="power.level"
+                label="Niveau (0 à 100)"
+                type="number"
+                min="0"
+                max="100"
+                required
+                outlined
             ></v-text-field>
 
             <v-btn color="red" class="white--text mt-2" @click="removePower(index)">
@@ -114,16 +114,17 @@ export default {
         realName: "",
         powers: [],
       },
-      error: null,
       successMessage: null,
       loading: false,
     };
   },
   computed: {
-    ...mapState(["selectedHero"]), 
+    ...mapState("heroes", ["selectedHero"]),
+    ...mapState("errors", ["error"]),
   },
   methods: {
-    ...mapActions(["setSelectedHero"]), 
+    ...mapActions("heroes", ["setSelectedHero"]),
+    ...mapActions("errors", ["setError", "clearError"]),
 
     addPower() {
       this.form.powers.push({ name: "", type: null, level: null });
@@ -133,7 +134,7 @@ export default {
     },
     async createHero() {
       this.loading = true;
-      this.error = null;
+      this.clearError();
       this.successMessage = null;
 
       try {
@@ -144,7 +145,7 @@ export default {
         this.successMessage = "Héros créé avec succès et stocké dans Vuex !";
         this.form = { publicName: "", realName: "", powers: [] };
       } catch (err) {
-        this.error = err.message;
+        this.setError(err.message);
       } finally {
         this.loading = false;
       }

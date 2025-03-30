@@ -4,29 +4,29 @@
 
     <v-form @submit.prevent="createOrg" v-model="valid" ref="form">
       <v-text-field
-        v-model="orgName"
-        label="Nom de l'Organisation"
-        required
-        outlined
-        :rules="[rules.required]"
+          v-model="orgName"
+          label="Nom de l'Organisation"
+          required
+          outlined
+          :rules="[rules.required]"
       ></v-text-field>
 
       <v-text-field
-        v-model="orgSecret"
-        label="Phrase Secrète"
-        required
-        outlined
-        type="password"
-        :rules="[rules.required]"
+          v-model="orgSecret"
+          label="Phrase Secrète"
+          required
+          outlined
+          type="password"
+          :rules="[rules.required]"
       ></v-text-field>
 
       <v-btn
-        type="submit"
-        color="blue darken-2"
-        class="white--text"
-        elevation="2"
-        :disabled="loading || !valid"
-        :loading="loading"
+          type="submit"
+          color="blue darken-2"
+          class="white--text"
+          elevation="2"
+          :disabled="loading || !valid"
+          :loading="loading"
       >
         Créer l'Organisation
       </v-btn>
@@ -61,7 +61,6 @@ export default {
       orgName: "",
       orgSecret: "",
       loading: false,
-      error: null,
       successMessage: null,
       valid: false,
       rules: {
@@ -70,14 +69,16 @@ export default {
     };
   },
   computed: {
-    ...mapState(["selectedOrganization"]), 
+    ...mapState("general", ["selectedOrganization"]),
+    ...mapState("errors", ["error"]),
   },
   methods: {
-    ...mapActions(["setSelectedOrganization"]), 
+    ...mapActions("general", ["setSelectedOrganization"]),
+    ...mapActions("errors", ["setError", "clearError"]),
 
     async createOrg() {
       this.loading = true;
-      this.error = null;
+      this.clearError();
       this.successMessage = null;
 
       try {
@@ -87,7 +88,7 @@ export default {
         });
 
         if (response && response._id) {
-          this.setSelectedOrganization(response); 
+          this.setSelectedOrganization(response);
           this.successMessage = "Organisation créée avec succès!";
         } else {
           this.successMessage = "Organisation créée, mais aucune donnée retournée.";
@@ -96,7 +97,7 @@ export default {
         this.orgName = "";
         this.orgSecret = "";
       } catch (err) {
-        this.error = err.message;
+        this.setError(err.message);
       } finally {
         this.loading = false;
       }

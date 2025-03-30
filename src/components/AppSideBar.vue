@@ -36,7 +36,8 @@ export default {
         { title: 'Créer une organisation', view: 'TestOrgCreate' },
         { title: 'Ajouter une team à une organisation', view: 'TestOrgTeam' },
         { title: "Supprimer une team d'une organisation", view: 'TestOrgDelete' },
-        { title: 'Récupérer une organisation', view: 'TestOrgId' }
+        { title: 'Récupérer une organisation', view: 'TestOrgId' },
+        { title: 'Utilisateur login', view:'TestUserLogin'}
       ]
     };
   }
