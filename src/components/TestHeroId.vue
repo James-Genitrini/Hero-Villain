@@ -7,26 +7,26 @@
 
           <v-form @submit.prevent="getHeroById">
             <v-text-field
-                v-model="heroId"
-                label="ID du Héros"
-                required
-                outlined
+              v-model="heroId"
+              label="ID du Héros"
+              required
+              outlined
             ></v-text-field>
 
             <v-text-field
-                v-model="orgSecret"
-                label="Phrase Secrète de l'Organisation"
-                type="password"
-                required
-                outlined
+              v-model="orgSecret"
+              label="Phrase Secrète de l'Organisation"
+              type="password"
+              required
+              outlined
             ></v-text-field>
 
             <v-btn
-                type="submit"
-                color="blue darken-2"
-                class="white--text"
-                :loading="loading"
-                :disabled="loading"
+              type="submit"
+              color="blue darken-2"
+              class="white--text"
+              :loading="loading"
+              :disabled="loading"
             >
               Récupérer le Héros
             </v-btn>
@@ -36,7 +36,7 @@
             {{ error }}
           </v-alert>
 
-          <v-alert v-if="selectedHero && !error" type="success" class="mt-3" dense>
+          <v-alert v-if="selectedHero" type="success" class="mt-3" dense>
             <div><strong>Nom Public:</strong> {{ selectedHero.publicName }}</div>
             <div><strong>Nom Réel:</strong> {{ selectedHero.realName }}</div>
             <div><strong>Pouvoirs:</strong></div>
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 import heroService from "@/services/hero.service";
 
 export default {
@@ -78,16 +78,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("heroes", ["selectedHero"]),
+    ...mapState("heroes", ["selectedHero"]), 
     ...mapState("errors", ["error"]),
   },
-  created() {
-    if (this.selectedHero) {
-      this.heroId = this.selectedHero._id || "";
-    }
-  },
   methods: {
-    ...mapMutations("heroes", ["setSelectedHero"]),
+    ...mapActions("heroes", ["setSelectedHero"]), 
     ...mapActions("errors", ["setError", "clearError"]),
 
     async getHeroById() {
@@ -96,8 +91,15 @@ export default {
 
       try {
         const response = await heroService.getHeroById(this.heroId, this.orgSecret);
-        this.setSelectedHero(response.data[0]);
+        console.log("Réponse API :", response);
+        
+        if (response.data && response.data.length > 0) {
+          this.setSelectedHero(response.data[0]); 
+        } else {
+          this.setError("Aucun héros trouvé avec cet ID.");
+        }
       } catch (err) {
+        console.error("Erreur API :", err);
         this.setError("Erreur lors de la récupération du héros : " + err.message);
       } finally {
         this.loading = false;
@@ -106,30 +108,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.hero-management {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin: 20px;
-}
-
-.v-btn {
-  margin-top: 10px;
-}
-
-.v-divider {
-  margin: 20px 0;
-}
-
-.v-list-item-title {
-  font-weight: bold;
-}
-
-pre {
-  background: #f5f5f5;
-  padding: 10px;
-  border-radius: 5px;
-  overflow-x: auto;
-}
-</style>

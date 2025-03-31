@@ -1,6 +1,7 @@
 import heroService from "@/services/hero.service";
 
 const heroes = {
+    namespaced: true,
     state: {
         heroAliases: [],
         selectedHero: null,
