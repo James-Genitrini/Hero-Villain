@@ -1,23 +1,28 @@
-const errors = {
+export default {
     state: {
-        error: null,
+        isError: false,
+        errorMsg: '',
     },
     mutations: {
-        setError(state, error) {
-            state.error = error;
+        pushError(state, msg) {
+        state.isError = true;
+        state.errorMsg = msg;
         },
-        clearError(state) {
-            state.error = null;
+        popError(state) {
+        state.isError = false;
+        state.errorMsg = '';
         },
     },
     actions: {
-        setError({ commit }, error) {
-            commit('setError', error);
+        triggerError({ commit }, msg) {
+        commit('pushError', msg);
         },
         clearError({ commit }) {
-            commit('clearError');
+        commit('popError');
         },
-    }
+    },
+    getters: {
+        isError: (state) => state.isError,
+        errorMsg: (state) => state.errorMsg,
+    },
 };
-
-export default errors;

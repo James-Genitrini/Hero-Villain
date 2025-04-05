@@ -66,14 +66,6 @@
         <v-btn type="submit" color="green darken-2" class="white--text" :loading="loading">
           Créer le Héros
         </v-btn>
-
-        <v-alert v-if="error" type="error" class="mt-3">
-          ❌ {{ error }}
-        </v-alert>
-
-        <v-alert v-if="successMessage" type="success" class="mt-3">
-          ✅ {{ successMessage }}
-        </v-alert>
       </v-form>
     </v-card>
 
@@ -120,11 +112,11 @@ export default {
   },
   computed: {
     ...mapState("heroes", ["selectedHero"]),
-    ...mapState("errors", ["error"]),
+    ...mapState("errors", ["isError", "errorMsg"]),  
   },
   methods: {
     ...mapActions("heroes", ["setSelectedHero"]),
-    ...mapActions("errors", ["setError", "clearError"]),
+    ...mapActions("errors", ["triggerError", "clearError"]), 
 
     addPower() {
       this.form.powers.push({ name: "", type: null, level: null });
@@ -135,17 +127,16 @@ export default {
     async createHero() {
       this.loading = true;
       this.clearError();
-      this.successMessage = null;
 
       try {
         const heroData = await heroService.createHero(this.form);
-
         this.setSelectedHero(heroData.data);
 
-        this.successMessage = "Héros créé avec succès et stocké dans Vuex !";
+        this.successMessage = "Héros créé avec succès !";
+
         this.form = { publicName: "", realName: "", powers: [] };
       } catch (err) {
-        this.setError(err.message);
+        this.triggerError("Erreur lors de la création du héros : " + err.message);
       } finally {
         this.loading = false;
       }

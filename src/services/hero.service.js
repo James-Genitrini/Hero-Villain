@@ -25,9 +25,15 @@ const getHeroById = async (heroId, orgSecret) => {
 
 
 const createHero = async (data) => {
-  const heroes = await axiosService.post('heroes/create', data);
-  return heroes;
+  try {
+    const heroes = await axiosService.post('heroes/create', data);
+    return heroes;
+  } catch (error) {
+    console.error("Erreur lors de la création du héros :", error.message);
+    throw error; 
+  }
 };
+
 
 const updateHero = async (heroData, orgSecret) => {
   try {
