@@ -76,13 +76,6 @@
           Mettre à jour le Héros
         </v-btn>
 
-        <v-alert v-if="error" type="error" class="mt-3">
-          ❌ {{ error }}
-        </v-alert>
-
-        <v-alert v-if="successMessage" type="success" class="mt-3">
-          ✅ {{ successMessage }}
-        </v-alert>
       </v-form>
     </v-card>
 
@@ -109,7 +102,6 @@
       </v-list>
     </v-card>
 
-    <!-- Affichage du selectedHero pour vérifier s'il est bien stocké dans le store -->
     <v-card class="mt-5 pa-4">
       <v-card-title>État du Store (selectedHero)</v-card-title>
       <v-divider></v-divider>
@@ -136,22 +128,17 @@ export default {
         powers: [],
         orgSecret: "",
       },
-      successMessage: null,
       loading: false,
       updatedHero: null,
     };
   },
   computed: {
     ...mapState("heroes", ["selectedHero"]),
-    ...mapState("secretPhrase", ["organizationPassword"]),
-    ...mapState("errors", ["error"]),
+    ...mapState("errors", ["error"]), 
   },
   created() {
     if (this.selectedHero) {
       this.form._id = this.selectedHero._id || "";
-    }
-    if (this.organizationPassword) {
-      this.form.orgSecret = this.organizationPassword;
     }
   },
   methods: {
@@ -166,8 +153,7 @@ export default {
     },
     async updateHero() {
       this.loading = true;
-      this.clearError();
-      this.successMessage = null;
+      this.clearError(); 
 
       try {
         const heroData = { ...this.form };
@@ -177,7 +163,6 @@ export default {
         if (heroData.powers.length === 0) delete heroData.powers;
 
         const response = await heroService.updateHero(heroData, this.form.orgSecret);
-        this.successMessage = "Héros mis à jour avec succès !";
 
         this.updatedHero = response.data;
 

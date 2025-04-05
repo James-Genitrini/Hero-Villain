@@ -13,10 +13,6 @@
       Récupérer les Héros
     </v-btn>
 
-    <v-alert v-if="error" type="error" class="mt-3" dense>
-      ❌ Une erreur est survenue : {{ error }}
-    </v-alert>
-
     <v-data-table
       v-if="aliases.length"
       :headers="headers"
@@ -32,6 +28,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import heroService from "@/services/hero.service";
 
 export default {
@@ -40,23 +37,27 @@ export default {
     return {
       aliases: [],
       loading: false,
-      error: null,
       headers: [
         { text: "ID", value: "_id" },
         { text: "Nom Public", value: "publicName" }
       ]
     };
   },
+  computed: {
+    ...mapState("errors", ["error"]),
+  },
   methods: {
+    ...mapActions("errors", ["setError", "clearError"]),
+
     async fetchHeroAliases() {
       this.loading = true;
-      this.error = null;
-      
+      this.clearError();
+
       try {
         const response = await heroService.getHeroAliases();
         this.aliases = response.data || [];
       } catch (err) {
-        this.error = err.message;
+        this.setError(err.message || "Une erreur est survenue lors de la récupération des héros.");
       } finally {
         this.loading = false;
       }

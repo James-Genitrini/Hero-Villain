@@ -32,10 +32,6 @@
             </v-btn>
           </v-form>
 
-          <v-alert v-if="error" type="error" class="mt-3" dense>
-            {{ error }}
-          </v-alert>
-
           <v-alert v-if="selectedHero" type="success" class="mt-3" dense>
             <div><strong>Nom Public:</strong> {{ selectedHero.publicName }}</div>
             <div><strong>Nom Réel:</strong> {{ selectedHero.realName }}</div>
@@ -78,33 +74,38 @@ export default {
     };
   },
   computed: {
-    ...mapState("heroes", ["selectedHero"]), 
+    ...mapState("heroes", ["selectedHero"]),
     ...mapState("errors", ["error"]),
   },
   methods: {
-    ...mapActions("heroes", ["setSelectedHero"]), 
-    ...mapActions("errors", ["setError", "clearError"]),
+    ...mapActions("heroes", ["setSelectedHero"]),
+    ...mapActions("errors", ["setError", "clearError"]), 
 
     async getHeroById() {
       this.loading = true;
-      this.clearError();
+      this.clearError(); 
 
       try {
         const response = await heroService.getHeroById(this.heroId, this.orgSecret);
-        console.log("Réponse API :", response);
-        
+
         if (response.data && response.data.length > 0) {
-          this.setSelectedHero(response.data[0]); 
+          this.setSelectedHero(response.data[0]);
         } else {
           this.setError("Aucun héros trouvé avec cet ID.");
         }
       } catch (err) {
-        console.error("Erreur API :", err);
         this.setError("Erreur lors de la récupération du héros : " + err.message);
       } finally {
         this.loading = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style scoped>
+.hero-management {
+  max-width: 800px;
+  margin: auto;
+}
+</style>
