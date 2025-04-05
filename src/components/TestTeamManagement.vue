@@ -67,9 +67,6 @@
             </v-card-text>
           </v-card>
 
-          <v-alert v-if="error" type="error" class="mt-3" dense>
-            {{ error }}
-          </v-alert>
         </v-card>
       </v-col>
     </v-row>

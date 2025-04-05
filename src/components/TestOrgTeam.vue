@@ -33,10 +33,6 @@
       </v-btn>
     </v-form>
 
-    <v-alert v-if="error" type="error" class="mt-3" dense>
-      Une erreur est survenue : {{ error }}
-    </v-alert>
-
     <v-alert v-if="successMessage" type="success" class="mt-3" dense>
       {{ successMessage }}
     </v-alert>
@@ -59,6 +55,7 @@
 
 <script>
 import axiosService from "@/services/axios.service"; 
+import { mapActions } from "vuex";
 
 export default {
   name: "AddTeamToOrg",
@@ -67,7 +64,6 @@ export default {
       orgSecret: "",
       teamId: "",
       loading: false,
-      error: null,
       successMessage: null,
       organization: null,
       valid: false,
@@ -77,9 +73,11 @@ export default {
     };
   },
   methods: {
+    ...mapActions("heroes", ["updateHero"]),
+    ...mapActions("errors", ["setError", "clearError"]),
+
     async addTeamToOrg() {
       this.loading = true;
-      this.error = null;
       this.successMessage = null;
       this.organization = null;
 
@@ -96,7 +94,7 @@ export default {
         this.organization = response.data;
 
       } catch (err) {
-        this.error = err.response?.data?.message || "Une erreur est survenue.";
+        this.setError(err.message);
       } finally {
         this.loading = false;
       }

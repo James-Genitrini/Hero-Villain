@@ -60,14 +60,14 @@
   
   <script>
   import orgService from "@/services/org.service"; 
-  
+  import { mapActions } from "vuex";
+
   export default {
     data() {
       return {
         orgSecret: "",
         teamId: "",
         loading: false,
-        error: null,
         successMessage: null,
         organization: null,
         valid: false,
@@ -77,9 +77,11 @@
       };
     },
     methods: {
+      ...mapActions("heroes", ["updateHero"]),
+      ...mapActions("errors", ["setError", "clearError"]),
+
       async removeTeamFromOrg() {
         this.loading = true;
-        this.error = null;
         this.successMessage = null;
   
         try {
@@ -88,7 +90,7 @@
           this.orgSecret = ""; 
           this.organization = response.data
         } catch (err) {
-          this.error = err.message || "Une erreur est survenue.";
+          this.setError(err.message);
         } finally {
           this.loading = false;
         }

@@ -16,9 +16,7 @@
             {{ loading ? "Chargement..." : "Récupérer les Équipes" }}
           </v-btn>
 
-          <v-alert v-if="error" type="error" class="mt-4">
-            ❌ Une erreur est survenue : {{ error }}
-          </v-alert>
+
 
           <v-data-table
             v-if="teams.length"
@@ -39,7 +37,7 @@
           </v-data-table>
 
           <v-alert
-            v-if="!teams.length && !loading && !error"
+            v-if="!teams.length && !loading"
             type="info"
             class="mt-4"
           >
@@ -53,6 +51,7 @@
 
 <script>
 import teamService from "@/services/team.service";
+import { mapActions } from "vuex";
 
 export default {
   name: "TestTeams",
@@ -60,7 +59,6 @@ export default {
     return {
       teams: [], 
       loading: false,
-      error: null, 
       headers: [
         { text: "ID", value: "_id" },
         { text: "Nom", value: "name" },
@@ -69,10 +67,12 @@ export default {
     };
   },
   methods: {
+    ...mapActions("heroes", ["updateHero"]),
+    ...mapActions("errors", ["setError", "clearError"]),
+
     async fetchTeams() {
       console.log("Chargement des équipes...");
       this.loading = true;
-      this.error = null;
       this.teams = [];
 
       try {
@@ -81,7 +81,7 @@ export default {
         console.log("Équipes récupérées :", this.teams);
       } catch (err) {
         console.error("Erreur :", err);
-        this.error = err.message;
+        this.setError(err.message);
       } finally {
         this.loading = false;
         console.log("Chargement terminé.");

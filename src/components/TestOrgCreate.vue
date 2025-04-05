@@ -32,9 +32,6 @@
       </v-btn>
     </v-form>
 
-    <v-alert v-if="error" type="error" class="mt-3" dense>
-      Une erreur est survenue : {{ error }}
-    </v-alert>
 
     <v-alert v-if="successMessage" type="success" class="mt-3" dense>
       {{ successMessage }}

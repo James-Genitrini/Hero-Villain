@@ -13,9 +13,6 @@
         Récupérer les Organisations
       </v-btn>
   
-      <v-alert v-if="error" type="error" class="mt-3" dense>
-        Une erreur est survenue : {{ error }}
-      </v-alert>
   
       <v-table v-if="orgs.length" class="mt-4">
         <thead>
@@ -39,6 +36,7 @@
   </template>
   
   <script>
+  import { mapActions } from "vuex";
   import orgService from "@/services/org.service";
   
   export default {
@@ -47,19 +45,20 @@
       return {
         orgs: [],
         loading: false,
-        error: null,
       };
     },
     methods: {
+      ...mapActions("heroes", ["updateHero"]),
+      ...mapActions("errors", ["setError", "clearError"]),
+
       async fetchOrgs() {
         this.loading = true;
-        this.error = null;
   
         try {
           const response = await orgService.getAllOrgs();
           this.orgs = response || [];
         } catch (err) {
-          this.error = err.message;
+          this.setError(err.message);
         } finally {
           this.loading = false;
         }
