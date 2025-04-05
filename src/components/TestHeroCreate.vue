@@ -112,11 +112,11 @@ export default {
   },
   computed: {
     ...mapState("heroes", ["selectedHero"]),
-    ...mapState("errors", ["isError", "errorMsg"]),  
+    ...mapState("errors", ["error", "isError"]),
   },
   methods: {
     ...mapActions("heroes", ["setSelectedHero"]),
-    ...mapActions("errors", ["triggerError", "clearError"]), 
+    ...mapActions("errors", ["setError", "clearError"]),
 
     addPower() {
       this.form.powers.push({ name: "", type: null, level: null });
@@ -124,9 +124,11 @@ export default {
     removePower(index) {
       this.form.powers.splice(index, 1);
     },
+
     async createHero() {
       this.loading = true;
       this.clearError();
+      this.successMessage = null;
 
       try {
         const heroData = await heroService.createHero(this.form);
@@ -136,7 +138,7 @@ export default {
 
         this.form = { publicName: "", realName: "", powers: [] };
       } catch (err) {
-        this.triggerError("Erreur lors de la création du héros : " + err.message);
+        this.setError("Erreur lors de la création du héros : " + err.message);
       } finally {
         this.loading = false;
       }

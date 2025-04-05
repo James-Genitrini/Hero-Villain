@@ -24,6 +24,10 @@
     <v-alert v-if="!aliases.length && !loading && !error" type="info" class="mt-3" dense>
       Pas encore de données... Clique sur le bouton pour commencer !
     </v-alert>
+    <v-alert v-if="error" type="error" class="mt-3" dense>
+      ❌ Une erreur est survenue : {{ error }}
+    </v-alert>
+
   </v-container>
 </template>
 
@@ -44,7 +48,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("errors", ["error"]),
+    ...mapState('errors', ['error', 'isError']),
   },
   methods: {
     ...mapActions("errors", ["setError", "clearError"]),
@@ -57,6 +61,7 @@ export default {
         const response = await heroService.getHeroAliases();
         this.aliases = response.data || [];
       } catch (err) {
+        console.error('Erreur lors de la requête:', err);
         this.setError(err.message || "Une erreur est survenue lors de la récupération des héros.");
       } finally {
         this.loading = false;

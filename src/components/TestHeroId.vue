@@ -63,7 +63,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import heroService from "@/services/hero.service";
+import heroService from "@/services/hero.service"; 
 
 export default {
   data() {
@@ -74,12 +74,12 @@ export default {
     };
   },
   computed: {
-    ...mapState("heroes", ["selectedHero"]),
-    ...mapState("errors", ["error"]),
+    ...mapState("heroes", ["selectedHero"]), 
+    ...mapState("errors", ["error"]), 
   },
   methods: {
-    ...mapActions("heroes", ["setSelectedHero"]),
-    ...mapActions("errors", ["setError", "clearError"]), 
+    ...mapActions("heroes", ["setSelectedHero"]), 
+    ...mapActions("errors", ["setError", "clearError"]),
 
     async getHeroById() {
       this.loading = true;

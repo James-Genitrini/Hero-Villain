@@ -1,28 +1,34 @@
-export default {
-    state: {
-        isError: false,
-        errorMsg: '',
+const state = {
+    error: null,
+  };
+  
+  const mutations = {
+    SET_ERROR(state, error) {
+      state.error = error;
     },
-    mutations: {
-        pushError(state, msg) {
-        state.isError = true;
-        state.errorMsg = msg;
-        },
-        popError(state) {
-        state.isError = false;
-        state.errorMsg = '';
-        },
+    CLEAR_ERROR(state) {
+      state.error = null;
     },
-    actions: {
-        triggerError({ commit }, msg) {
-        commit('pushError', msg);
-        },
-        clearError({ commit }) {
-        commit('popError');
-        },
+  };
+  
+  const actions = {
+    setError({ commit }, error) {
+      commit('SET_ERROR', error);
     },
-    getters: {
-        isError: (state) => state.isError,
-        errorMsg: (state) => state.errorMsg,
+    clearError({ commit }) {
+      commit('CLEAR_ERROR');
     },
-};
+  };
+  
+  const getters = {
+    error: (state) => state.error,
+  };
+  
+  export default {
+    namespaced: true,
+    state,
+    mutations,
+    actions,
+    getters,
+  };
+  
