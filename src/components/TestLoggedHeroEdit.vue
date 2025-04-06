@@ -51,7 +51,7 @@ export default {
         return;
       }
       this.form = {
-        _id: user._id,
+        _id: user.hero._id,
         publicName: user.hero.publicName || "",
         realName: user.hero.realName || "",
         powers: user.hero.powers || [],
