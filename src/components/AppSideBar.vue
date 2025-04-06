@@ -38,7 +38,8 @@ export default {
         { title: 'Ajouter une team à une organisation', view: 'TestOrgTeam' },
         { title: "Supprimer une team d'une organisation", view: 'TestOrgDelete' },
         { title: 'Récupérer une organisation', view: 'TestOrgId' },
-        { title: 'Utilisateur login', view: 'TestUserLogin', notIfConnected: true },
+        { title: 'Se connecter', view: 'TestUserLogin', notIfConnected: true },
+        { title: 'S\'enregistrer', view: 'register', notIfConnected: true },
         { title: 'Mon profil', view: 'LoggedHeroEdit', authOnly: true },
         { title: 'Déconnexion', view: 'Logout', authOnly: true }
       ]
