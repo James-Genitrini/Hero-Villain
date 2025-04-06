@@ -1,5 +1,13 @@
 <template>
   <v-navigation-drawer app clipped v-model="drawer" :mini-variant="miniVariant">
+    <!-- Logo or Title -->
+    <v-list-item class="unclickable">
+      <v-list-item-content>
+        <v-list-item-title class="text-h6">
+          {{ isConnected ? `Bonjour ${login}` : 'HeroCorp' }}
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
     <v-list dense>
       <v-list-item-group>
         <v-list-item
@@ -26,6 +34,10 @@ export default {
       drawer: true,
       miniVariant: false,
       menuItems: [
+        { title: 'Se connecter', view: 'TestUserLogin', notIfConnected: true },
+        { title: 'S\'enregistrer', view: 'register', notIfConnected: true },
+        { title: 'Mon profil', view: 'LoggedHeroEdit', authOnly: true },
+        { title: '🛑 Déconnexion ❗', view: 'Logout', authOnly: true },
         { title: 'Héros', view: 'TestHeroAliases' },
         { title: 'Créer un Héros', view: 'TestHeroCreate' },
         { title: 'Récupérer un Héros', view: 'TestHeroId' },
@@ -38,16 +50,15 @@ export default {
         { title: 'Ajouter une team à une organisation', view: 'TestOrgTeam' },
         { title: "Supprimer une team d'une organisation", view: 'TestOrgDelete' },
         { title: 'Récupérer une organisation', view: 'TestOrgId' },
-        { title: 'Se connecter', view: 'TestUserLogin', notIfConnected: true },
-        { title: 'S\'enregistrer', view: 'register', notIfConnected: true },
-        { title: 'Mon profil', view: 'LoggedHeroEdit', authOnly: true },
-        { title: 'Déconnexion', view: 'Logout', authOnly: true }
       ]
     };
   },
   computed: {
     isConnected() {
       return !!localStorage.getItem("xsrfToken");
+    },
+    login() {
+      return localStorage.getItem("login") || '';
     },
     visibleMenuItems() {
       return this.menuItems.filter((item) => {
@@ -61,6 +72,7 @@ export default {
     handleLogout(item) {
       if (item.view === 'Logout') {
         localStorage.removeItem('xsrfToken');
+        localStorage.removeItem('login');
         this.$router.push({ name: 'TestUserLogin' });
         location.reload();
       }
@@ -71,21 +83,26 @@ export default {
 
 <style scoped>
 .v-navigation-drawer {
-  width: 250px;
-  background-color: #f5f5f5;
+  width: 280px;
+  color: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .v-list-item {
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin: 4px 8px;
 }
 
 .v-list-item:hover {
-  background-color: #e0e0e0;
+  background-color: rgba(58, 58, 58, 0.61);
+  color: #ffffff;
 }
 
 .v-list-item.router-link-exact-active {
   background-color: #ffc107 !important;
-  color: black;
+  color: black !important;
 }
 
 .v-list-item-title {
@@ -94,6 +111,21 @@ export default {
 }
 
 .v-divider {
-  margin: 10px 0;
+  border-color: #3a3a3a;
+  margin: 16px 0;
+}
+
+.v-list-item-icon {
+  margin-right: 12px;
+}
+
+.unclickable {
+  pointer-events: none;
+  cursor: default;
+}
+
+.unclickable:hover {
+  background-color: inherit !important;
+  color: inherit;
 }
 </style>
