@@ -11,7 +11,10 @@ const secretPhrase = {
         setOrganizationPassword({ commit }, password) {
             commit('setOrganizationPassword', password);
         },
-    }
+    },
+    getters: {
+        hasOrgSecret: (state) => !!state.organizationPassword,
+      }      
 };
 
 export default secretPhrase;

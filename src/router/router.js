@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
+import Home from '@/components/Home.vue';
 import TestHeroAliases from '@/components/TestHero.vue';
 import TestHeroCreate from '@/components/TestHeroCreate.vue';
 import TestHeroId from '@/components/TestHeroId.vue';
@@ -17,6 +18,7 @@ import TestOrgDelete from '@/components/TestOrgDelete.vue';
 Vue.use(VueRouter);
 
 const routes = [
+  { path: '/', component: Home, name: 'Home' },
   { path: '/heroes', component: TestHeroAliases, name: 'TestHeroAliases' },
   { path: '/heroes/create', component: TestHeroCreate, name: 'TestHeroCreate' },
   { path: '/heroes/:id', component: TestHeroId, name: 'TestHeroId' },
@@ -29,6 +31,7 @@ const routes = [
   { path: '/orgs/:id', component: TestOrgId, name: 'TestOrgId' },
   { path: '/orgs/addteam', component: TestOrgTeam, name: 'TestOrgTeam' },
   { path: '/orgs/removeteam', component: TestOrgDelete, name: 'TestOrgDelete' },
+  { path: '*', redirect: '/' }
 ];
 
 const router = new VueRouter({
