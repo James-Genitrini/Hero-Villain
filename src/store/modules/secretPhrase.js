@@ -1,6 +1,6 @@
 const secretPhrase = {
     state: {
-        organizationPassword: '',
+        organizationPassword: localStorage.getItem('secretPhrase') || '',
     },
     mutations: {
         setOrganizationPassword(state, password) {
@@ -9,6 +9,7 @@ const secretPhrase = {
     },
     actions: {
         setOrganizationPassword({ commit }, password) {
+            localStorage.setItem('secretPhrase', password); 
             commit('setOrganizationPassword', password);
         },
     },
