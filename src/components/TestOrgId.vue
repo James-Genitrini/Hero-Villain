@@ -75,6 +75,7 @@ export default {
   methods: {
     ...mapActions("general", ["setSelectedOrganization"]),
     ...mapActions("errors", ["setError", "clearError"]),
+    ...mapActions(["setOrganizationPassword"]),
 
     async fetchOrgById() {
       if (!this.orgId) {
@@ -87,7 +88,8 @@ export default {
       this.org = null;
 
       try {
-        const orgData = await orgService.getOrgById(this.orgId, this.orgSecret);
+        this.setOrganizationPassword(this.orgSecret);
+        const orgData = await orgService.getOrgById(this.orgId);
         this.org = orgData;
         this.setSelectedOrganization(orgData);
       } catch (err) {

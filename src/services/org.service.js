@@ -22,10 +22,10 @@ const createOrg = async (data) => {
   }
 };
 
-const addTeamToOrg = async (orgSecret, teamId) => {
+const addTeamToOrg = async (teamId) => {
   try {
     const response = await axiosService.patch(
-      `/orgs/addteam?org-secret=${orgSecret}`, 
+      `/orgs/addteam`, 
       { idTeam: teamId }
     );
     return response; 
@@ -35,10 +35,10 @@ const addTeamToOrg = async (orgSecret, teamId) => {
   }
 };
 
-const removeTeamFromOrg = async (orgSecret, teamId) => {
+const removeTeamFromOrg = async (teamId) => {
   try {
     const response = await axiosService.patch(
-      `/orgs/removeteam?org-secret=${orgSecret}`, 
+      `/orgs/removeteam`, 
       { idTeam: teamId }
     );
     return response;
@@ -48,9 +48,9 @@ const removeTeamFromOrg = async (orgSecret, teamId) => {
   }
 };
 
-const getOrgById = async (orgId, secret) => {
+const getOrgById = async (orgId) => {
   try {
-    const response = await axiosService.get(`/orgs/getbyid/${orgId}?org-secret=${secret}`);
+    const response = await axiosService.get(`/orgs/getbyid/${orgId}`);
     return response.data[0]; 
   } catch (error) {
     console.error("Erreur lors de la récupération de l'organisation :", error.message);

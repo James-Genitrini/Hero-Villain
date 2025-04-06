@@ -79,13 +79,15 @@
     methods: {
       ...mapActions("heroes", ["updateHero"]),
       ...mapActions("errors", ["setError", "clearError"]),
+      ...mapActions(["setOrganizationPassword"]),
 
       async removeTeamFromOrg() {
         this.loading = true;
         this.successMessage = null;
   
         try {
-          const response = await orgService.removeTeamFromOrg(this.orgSecret, this.teamId);
+          this.setOrganizationPassword(this.orgSecret);
+          const response = await orgService.removeTeamFromOrg(this.teamId);
           this.successMessage = `L'équipe a été supprimée de l'organisation avec succès.`;
           this.orgSecret = ""; 
           this.organization = response.data

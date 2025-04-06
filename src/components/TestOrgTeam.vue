@@ -69,12 +69,13 @@ export default {
       valid: false,
       rules: {
         required: value => !!value || "Ce champ est requis"
-      }
+      },
     };
   },
   methods: {
     ...mapActions("heroes", ["updateHero"]),
     ...mapActions("errors", ["setError", "clearError"]),
+    ...mapActions(["setOrganizationPassword"]),
 
     async addTeamToOrg() {
       this.loading = true;
@@ -83,9 +84,9 @@ export default {
 
       try {
         const payload = { idTeam: this.teamId };
-
+        this.setOrganizationPassword(this.orgSecret)
         const response = await axiosService.patch(
-          `/orgs/addteam?org-secret=${this.orgSecret}`,
+          `/orgs/addteam`,
           payload
         );
 
