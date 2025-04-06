@@ -4,9 +4,8 @@
       <v-card-title>Modifier mon Profil Héro 🦸</v-card-title>
 
       <v-form @submit.prevent="submit">
-        <v-text-field v-model="form._id" label="Id" outlined></v-text-field>
-        <v-text-field v-model="form.publicName" label="Nom Public" outlined></v-text-field>
-        <v-text-field v-model="form.realName" label="Nom Réel" outlined></v-text-field>
+        <v-text-field v-model="form.publicName" label="Nom Public" outlined :disabled="noHero"></v-text-field>
+        <v-text-field v-model="form.realName" label="Nom Réel" outlined :disabled="noHero"></v-text-field>
 
         <v-btn @click="addPower" :disabled="noHero">Ajouter un Pouvoir</v-btn>
         <div v-for="(power, index) in form.powers" :key="index" class="mt-4">
