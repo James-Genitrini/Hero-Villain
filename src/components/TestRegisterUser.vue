@@ -73,21 +73,10 @@ export default {
         console.log(response);
         this.successMessage = 'Enregistrement réussi !';
         this.error = '';
-        // Rediriger ou effectuer d'autres actions après l'enregistrement
+        this.$router.push('LoggedHeroEdit');
       } catch (err) {
         this.successMessage = '';
-        this.error = this.parseErrorMessage(err.message);
-      }
-    },
-    parseErrorMessage(message) {
-      if (message.includes('login déjà pris')) {
-        return 'Le login est déjà pris.';
-      } else if (message.includes('nom du héros inexistant')) {
-        return 'Le nom du héros fourni n\'existe pas.';
-      } else if (message.includes('héros déjà associé')) {
-        return 'Le héros est déjà associé à un utilisateur.';
-      } else {
-        return message || 'Une erreur inconnue est survenue.';
+        this.error = "Echec de l'enregistrement. Vérifiez vos informations.";
       }
     },
   },
