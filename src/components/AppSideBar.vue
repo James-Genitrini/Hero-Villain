@@ -3,10 +3,11 @@
     <v-list dense>
       <v-list-item-group>
         <v-list-item
-          v-for="(item, index) in menuItems"
-          :key="index"
-          :to="{ name: item.view }"
-          exact
+            v-for="(item, index) in visibleMenuItems"
+            :key="index"
+            :to="item.view === 'Logout' ? null : { name: item.view }"
+            @click="handleLogout(item)"
+            exact
         >
           <v-list-item-content>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -37,9 +38,32 @@ export default {
         { title: 'Ajouter une team à une organisation', view: 'TestOrgTeam' },
         { title: "Supprimer une team d'une organisation", view: 'TestOrgDelete' },
         { title: 'Récupérer une organisation', view: 'TestOrgId' },
-        { title: 'Utilisateur login', view:'TestUserLogin'}
+        { title: 'Utilisateur login', view: 'TestUserLogin', notIfConnected: true },
+        { title: 'Mon profil', view: 'LoggedHeroEdit', authOnly: true },
+        { title: 'Déconnexion', view: 'Logout', authOnly: true }
       ]
     };
+  },
+  computed: {
+    isConnected() {
+      return !!localStorage.getItem("xsrfToken");
+    },
+    visibleMenuItems() {
+      return this.menuItems.filter((item) => {
+        if (item.authOnly && !this.isConnected) return false;
+        if (item.notIfConnected && this.isConnected) return false;
+        return true;
+      });
+    }
+  },
+  methods: {
+    handleLogout(item) {
+      if (item.view === 'Logout') {
+        localStorage.removeItem('xsrfToken');
+        this.$router.push({ name: 'TestUserLogin' });
+        location.reload();
+      }
+    }
   }
 };
 </script>
@@ -47,10 +71,28 @@ export default {
 <style scoped>
 .v-navigation-drawer {
   width: 250px;
+  background-color: #f5f5f5;
+}
+
+.v-list-item {
+  transition: background-color 0.3s;
+}
+
+.v-list-item:hover {
+  background-color: #e0e0e0;
 }
 
 .v-list-item.router-link-exact-active {
   background-color: #ffc107 !important;
   color: black;
+}
+
+.v-list-item-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.v-divider {
+  margin: 10px 0;
 }
 </style>

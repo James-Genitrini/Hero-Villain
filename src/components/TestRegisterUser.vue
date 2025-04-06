@@ -1,7 +1,7 @@
 <template>
-  <div class="login-container">
-    <h2>Authentification</h2>
-    <form @submit.prevent="loginUser">
+  <div class="register-container">
+    <h2>Enregistrement</h2>
+    <form @submit.prevent="registerUser">
       <div class="form-group">
         <label for="login">Login:</label>
         <input type="text" id="login" v-model="login" required />
@@ -10,7 +10,18 @@
         <label for="password">Mot de passe:</label>
         <input type="password" id="password" v-model="password" required />
       </div>
-      <button type="submit">Se connecter</button>
+      <div class="form-group">
+        <label for="hero">Nom du héros:</label>
+        <input type="text" id="hero" v-model="hero" required />
+      </div>
+      <div class="form-group">
+        <vue-recaptcha
+            :sitekey="captchaSiteKey"
+            @verify="onCaptchaVerified"
+            @expired="onCaptchaExpired"
+        ></vue-recaptcha>
+      </div>
+      <button type="submit" :disabled="!captchaVerified">S'enregistrer</button>
     </form>
 
     <div v-if="successMessage" class="success-banner">
@@ -20,76 +31,61 @@
     <div v-if="error" class="error-banner">
       {{ error }}
     </div>
-
-    <div v-if="user" class="user-info">
-      <h3>Bienvenue, {{ user.name }} !</h3>
-      <p><strong>XSRF Token:</strong> {{ user.xsrfToken }}</p>
-      <p><strong>Refresh Token:</strong> {{ user.refreshToken }}</p>
-    </div>
-
-    <div v-if="userInfo" class="user-details">
-      <h4>Infos complètes de l'utilisateur :</h4>
-      <p><strong>Login:</strong> {{ userInfo.login }}</p>
-      <p><strong>Mot de passe:</strong> {{ userInfo.password }}</p>
-      <p><strong>Héro associé:</strong> {{ userInfo.hero.name }}</p>
-    </div>
   </div>
 </template>
 
 <script>
+import VueRecaptcha from 'vue-recaptcha';
 import UserService from '@/services/user.service';
+import { captchaSiteKey } from '@/commons/config';
 
 export default {
+  components: { VueRecaptcha },
   data() {
     return {
       login: '',
       password: '',
+      hero: '',
+      captchaToken: '',
+      captchaVerified: false,
       error: '',
       successMessage: '',
-      user: null,
-      userInfo: null,
+      captchaSiteKey: captchaSiteKey,
     };
   },
-  created() {
-    // Vérifie si l'utilisateur est déjà connecté
-    if (this.isAuthenticated()) {
-      this.$router.push({ name: 'Home' });
-    }
-  },
   methods: {
-    isAuthenticated() {
-      return !!localStorage.getItem('xsrfToken');
+    onCaptchaVerified(response) {
+      this.captchaToken = response;
+      this.captchaVerified = true;
     },
-    async loginUser() {
+    onCaptchaExpired() {
+      this.captchaToken = '';
+      this.captchaVerified = false;
+    },
+    async registerUser() {
       try {
-        console.log("Tentative de connexion avec:", this.login);
-        this.user = await UserService.login(this.login, this.password);
-        this.successMessage = `Connexion réussie pour: ${this.user.name}`;
+        const response = await UserService.register({
+          login: this.login,
+          password: this.password,
+          hero: this.hero,
+          captchaToken: this.captchaToken,
+        });
+        console.log(response);
+        this.successMessage = 'Enregistrement réussi !';
         this.error = '';
-        await this.getUserInfo();
-        location.reload();
+        // Rediriger ou effectuer d'autres actions après l'enregistrement
       } catch (err) {
-        this.user = null;
-        this.userInfo = null;
         this.successMessage = '';
         this.error = this.parseErrorMessage(err.message);
       }
     },
-    async getUserInfo() {
-      try {
-        const info = await UserService.getUserInfo(this.login);
-        this.userInfo = info;
-        console.log('Infos utilisateur récupérées:', info);
-      } catch (err) {
-        this.error = this.parseErrorMessage(err.message);
-        this.userInfo = null;
-      }
-    },
     parseErrorMessage(message) {
-      if (message.includes('login incorrect')) {
-        return 'Login ou mot de passe incorrect.';
-      } else if (message.includes('Token XSRF manquant')) {
-        return 'Veuillez vous reconnecter.';
+      if (message.includes('login déjà pris')) {
+        return 'Le login est déjà pris.';
+      } else if (message.includes('nom du héros inexistant')) {
+        return 'Le nom du héros fourni n\'existe pas.';
+      } else if (message.includes('héros déjà associé')) {
+        return 'Le héros est déjà associé à un utilisateur.';
       } else {
         return message || 'Une erreur inconnue est survenue.';
       }
@@ -98,9 +94,8 @@ export default {
 };
 </script>
 
-
 <style scoped>
-.login-container {
+.register-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -154,7 +149,12 @@ button {
   transition: background-color 0.3s;
 }
 
-button:hover {
+button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+button:hover:enabled {
   background-color: #0056b3;
 }
 
@@ -172,16 +172,5 @@ button:hover {
   padding: 10px;
   border-radius: 4px;
   margin-top: 10px;
-}
-
-.user-info, .user-details {
-  margin-top: 20px;
-  text-align: left;
-  width: 100%;
-  max-width: 400px;
-}
-
-.user-info h3, .user-details h4 {
-  color: #007bff;
 }
 </style>
