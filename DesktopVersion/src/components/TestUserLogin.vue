@@ -38,7 +38,6 @@ export default {
     };
   },
   created() {
-    // Vérifie si l'utilisateur est déjà connecté
     if (this.isAuthenticated()) {
       this.$router.push({ name: 'Home' });
     }
@@ -70,12 +69,10 @@ export default {
     async getUserInfo() {
       try {
         const info = await UserService.getUserInfo(this.login);
-        this.userInfo = info;
         console.log('Infos utilisateur récupérées:', info);
       } catch (err) {
         this.setError(err.message)
         this.error = this.parseErrorMessage(err.message);
-        this.userInfo = null;
       }
     },
     parseErrorMessage(message) {

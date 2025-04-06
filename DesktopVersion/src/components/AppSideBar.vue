@@ -1,6 +1,5 @@
 <template>
   <v-navigation-drawer app clipped v-model="drawer" :mini-variant="miniVariant">
-    <!-- Logo or Title -->
     <v-list-item class="unclickable">
       <v-list-item-content>
         <v-list-item-title class="text-h6">
@@ -73,6 +72,7 @@ export default {
       if (item.view === 'Logout') {
         localStorage.removeItem('xsrfToken');
         localStorage.removeItem('login');
+        localStorage.removeItem('secretPhrase')
         this.$router.push({ name: 'TestUserLogin' });
         location.reload();
       }

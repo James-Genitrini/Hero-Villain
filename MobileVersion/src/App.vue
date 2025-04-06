@@ -2,7 +2,7 @@
   <v-app>
     <app-sidebar />
     <v-main>
-      <v-container class="bg-grey lighten-4">
+      <v-container class="bg-grey-lighten-4">
         <router-view />
         <ErrorDialog />
       </v-container>
