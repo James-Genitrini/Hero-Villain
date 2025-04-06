@@ -38,6 +38,7 @@
 import VueRecaptcha from 'vue-recaptcha';
 import UserService from '@/services/user.service';
 import { captchaSiteKey } from '@/commons/config';
+import { mapState } from "vuex";
 
 export default {
   components: { VueRecaptcha },
@@ -52,6 +53,9 @@ export default {
       successMessage: '',
       captchaSiteKey: captchaSiteKey,
     };
+  },
+  computed: {
+    ...mapState("errors", ["error"]),
   },
   methods: {
     onCaptchaVerified(response) {
@@ -75,6 +79,7 @@ export default {
         this.error = '';
         this.$router.push('LoggedHeroEdit');
       } catch (err) {
+        this.setError(err.message)
         this.successMessage = '';
         this.error = "Echec de l'enregistrement. Vérifiez vos informations.";
       }
