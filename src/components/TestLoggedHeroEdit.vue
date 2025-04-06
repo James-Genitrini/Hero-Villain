@@ -8,16 +8,19 @@
         <v-text-field v-model="form.publicName" label="Nom Public" outlined></v-text-field>
         <v-text-field v-model="form.realName" label="Nom Réel" outlined></v-text-field>
 
-        <v-btn @click="addPower">Ajouter un Pouvoir</v-btn>
+        <v-btn @click="addPower" :disabled="noHero">Ajouter un Pouvoir</v-btn>
         <div v-for="(power, index) in form.powers" :key="index" class="mt-4">
-          <v-text-field v-model="power.name" label="Nom du Pouvoir"></v-text-field>
-          <v-text-field v-model.number="power.type" label="Type" type="number"></v-text-field>
-          <v-text-field v-model.number="power.level" label="Niveau" type="number"></v-text-field>
+          <v-text-field v-model="power.name" label="Nom du Pouvoir" :disabled="noHero"></v-text-field>
+          <v-text-field v-model.number="power.type" label="Type" type="number" :disabled="noHero"></v-text-field>
+          <v-text-field v-model.number="power.level" label="Niveau" type="number" :disabled="noHero"></v-text-field>
         </div>
 
-        <v-btn type="submit" color="primary">Mettre à jour</v-btn>
+        <v-btn type="submit" color="primary" :disabled="noHero">Mettre à jour</v-btn>
         <v-alert v-if="success" type="success" class="mt-2">Mise à jour réussie ! 🎉</v-alert>
         <v-alert v-if="error" type="error" class="mt-2">{{ error }}</v-alert>
+        <v-alert v-if="noHero" type="info" class="mt-2">
+          La modification du profil est impossible car cet utilisateur n'est pas associé à un héros.
+        </v-alert>
       </v-form>
     </v-card>
   </v-container>
@@ -38,11 +41,17 @@ export default {
       },
       error: null,
       success: false,
+      noHero: false,
     };
   },
   async created() {
     try {
       const user = await UserService.getUserInfo(localStorage.getItem("login"));
+      if (user.hero == null) {
+        this.error = "🚫 Cet utilisateur n'est pas associé à un héros !";
+        this.noHero = true;
+        return;
+      }
       this.form = {
         _id: user._id,
         publicName: user.hero.publicName || "",

@@ -20,19 +20,6 @@
     <div v-if="error" class="error-banner">
       {{ error }}
     </div>
-
-    <div v-if="user" class="user-info">
-      <h3>Bienvenue, {{ user.name }} !</h3>
-      <p><strong>XSRF Token:</strong> {{ user.xsrfToken }}</p>
-      <p><strong>Refresh Token:</strong> {{ user.refreshToken }}</p>
-    </div>
-
-    <div v-if="userInfo" class="user-details">
-      <h4>Infos complètes de l'utilisateur :</h4>
-      <p><strong>Login:</strong> {{ userInfo.login }}</p>
-      <p><strong>Mot de passe:</strong> {{ userInfo.password }}</p>
-      <p><strong>Héro associé:</strong> {{ userInfo.hero.name }}</p>
-    </div>
   </div>
 </template>
 
@@ -48,7 +35,6 @@ export default {
       error: '',
       successMessage: '',
       user: null,
-      userInfo: null,
     };
   },
   created() {
@@ -73,11 +59,9 @@ export default {
         this.user = await UserService.login(this.login, this.password);
         this.successMessage = `Connexion réussie pour: ${this.user.name}`;
         this.error = '';
-        await this.getUserInfo();
         location.reload();
       } catch (err) {
         this.user = null;
-        this.userInfo = null;
         this.successMessage = '';
         this.setError(err.message)
         this.error = this.parseErrorMessage(err.message);
