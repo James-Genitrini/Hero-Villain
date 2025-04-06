@@ -25,6 +25,7 @@
 
 <script>
 import UserService from '@/services/user.service';
+import { mapState, mapActions } from "vuex";
 
 export default {
   data() {
@@ -42,7 +43,13 @@ export default {
       this.$router.push({ name: 'Home' });
     }
   },
+  computed: {
+    ...mapState("heroes", ["selectedHero"]),
+    ...mapState("errors", ["error"]),
+  },
   methods: {
+    ...mapActions("errors", ["setError", "clearError"]),
+
     isAuthenticated() {
       return !!localStorage.getItem('xsrfToken');
     },
@@ -56,7 +63,19 @@ export default {
       } catch (err) {
         this.user = null;
         this.successMessage = '';
+        this.setError(err.message)
         this.error = this.parseErrorMessage(err.message);
+      }
+    },
+    async getUserInfo() {
+      try {
+        const info = await UserService.getUserInfo(this.login);
+        this.userInfo = info;
+        console.log('Infos utilisateur récupérées:', info);
+      } catch (err) {
+        this.setError(err.message)
+        this.error = this.parseErrorMessage(err.message);
+        this.userInfo = null;
       }
     },
     parseErrorMessage(message) {
