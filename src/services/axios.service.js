@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 import axios from 'axios';
+import store from '@/store';
 
 const axiosInstance = axios.create({
   baseURL: 'https://apidemo.iut-bm.univ-fcomte.fr/herocorp', 
@@ -15,6 +16,12 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    const orgSecret = store.state.secretPhrase.organizationPassword;
+    if (orgSecret) {
+      config.headers['org-secret'] = orgSecret;
+    }
+
     return config;
   },
   (error) => Promise.reject(error)

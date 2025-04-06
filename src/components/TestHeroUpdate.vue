@@ -134,7 +134,7 @@ export default {
   },
   computed: {
     ...mapState("heroes", ["selectedHero"]),
-    ...mapState("errors", ["error"]), 
+    ...mapState("errors", ["error"]),
   },
   created() {
     if (this.selectedHero) {
@@ -144,6 +144,7 @@ export default {
   methods: {
     ...mapActions("heroes", ["updateHero"]),
     ...mapActions("errors", ["setError", "clearError"]),
+    ...mapActions(["setOrganizationPassword"]),
 
     addPower() {
       this.form.powers.push({ name: "", type: null, level: null });
@@ -153,16 +154,19 @@ export default {
     },
     async updateHero() {
       this.loading = true;
-      this.clearError(); 
+      this.clearError();
 
       try {
+        this.setOrganizationPassword(this.form.orgSecret);
+
         const heroData = { ...this.form };
+        delete heroData.orgSecret; 
 
         if (!heroData.publicName) delete heroData.publicName;
         if (!heroData.realName) delete heroData.realName;
         if (heroData.powers.length === 0) delete heroData.powers;
 
-        const response = await heroService.updateHero(heroData, this.form.orgSecret);
+        const response = await heroService.updateHero(heroData);
 
         this.updatedHero = response.data;
 

@@ -11,11 +11,9 @@ const getHeroAliases = async () => {
   }
 };
 
-const getHeroById = async (heroId, orgSecret) => {
+const getHeroById = async (heroId) => {
   try {
-    const response = await axiosService.get(
-      `/heroes/getbyid/${heroId}?org-secret=${orgSecret}`
-    );
+    const response = await axiosService.get(`/heroes/getbyid/${heroId}`);
     return response;
   } catch (error) {
     console.error("Erreur lors de la récupération du héros :", error.message);
@@ -35,12 +33,9 @@ const createHero = async (data) => {
 };
 
 
-const updateHero = async (heroData, orgSecret) => {
+const updateHero = async (heroData) => {
   try {
-    const response = await axiosService.put(
-      `/heroes/update?org-secret=${orgSecret}`,
-      heroData
-    );
+    const response = await axiosService.put(`/heroes/update`, heroData);
     return response;
   } catch (error) {
     console.error("Erreur lors de la mise à jour du héros :", error.message);
