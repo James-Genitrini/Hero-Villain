@@ -165,7 +165,7 @@ export default {
         if (!heroData.publicName) delete heroData.publicName;
         if (!heroData.realName) delete heroData.realName;
         if (heroData.powers.length === 0) delete heroData.powers;
-
+        console.log(heroData)
         const response = await heroService.updateHero(heroData);
 
         this.updatedHero = response.data;

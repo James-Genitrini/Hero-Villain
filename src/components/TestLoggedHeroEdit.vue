@@ -4,6 +4,7 @@
       <v-card-title>Modifier mon Profil Héro 🦸</v-card-title>
 
       <v-form @submit.prevent="submit">
+        <v-text-field v-model="form._id" label="Id" outlined></v-text-field>
         <v-text-field v-model="form.publicName" label="Nom Public" outlined></v-text-field>
         <v-text-field v-model="form.realName" label="Nom Réel" outlined></v-text-field>
 
@@ -24,6 +25,7 @@
 
 <script>
 import UserService from "@/services/user.service";
+import { mapState, mapActions } from "vuex";
 
 export default {
   data() {
@@ -52,7 +54,13 @@ export default {
       console.error(e);
     }
   },
+  computed: {
+    ...mapState("heroes", ["selectedHero"]),
+    ...mapState("errors", ["error"]),
+  },
   methods: {
+    ...mapActions("errors", ["setError", "clearError"]),
+
     addPower() {
       this.form.powers.push({ name: "", type: 1, level: 0 });
     },
@@ -64,7 +72,8 @@ export default {
         console.log("Réponse de mise à jour:", res);
         this.success = true;
       } catch (e) {
-        this.error = e.message;
+        this.setError(e.message)
+        // this.error = e.message;
       }
     },
   },
